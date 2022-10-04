@@ -25,7 +25,6 @@
             android:text="@string/header_item"
             android:textColor="@color/white" />
 
-
         <TextView
             style="@style/TextAppearance.MaterialComponents.Body1"
             android:layout_width="0dp"

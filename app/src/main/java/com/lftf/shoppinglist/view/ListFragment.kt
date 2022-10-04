@@ -1,5 +1,6 @@
 package com.lftf.shoppinglist.view
 
+import android.app.AlertDialog
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -11,6 +12,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.material.snackbar.Snackbar
 import com.lftf.shoppinglist.R
 import com.lftf.shoppinglist.databinding.FragmentListBinding
 import com.lftf.shoppinglist.model.ItemModel
@@ -49,7 +51,15 @@ class ListFragment : Fragment(), View.OnClickListener {
 
         val listener = object : ItemListener {
             override fun onLongClick(id: Int): Boolean {
-                viewModel.delete(id)
+                AlertDialog.Builder(context)
+                    .setTitle("Excluir item")
+                    .setMessage("Tem certeza que deseja excluir?")
+                    .setPositiveButton("Sim") { _, _ ->
+                        viewModel.delete(id)
+                        true
+                    }
+                    .setNegativeButton("Não") { _, _ -> false }
+                    .show()
                 return true
             }
 
