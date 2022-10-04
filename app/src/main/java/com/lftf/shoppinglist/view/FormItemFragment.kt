@@ -60,21 +60,21 @@ class FormItemFragment : Fragment(), View.OnClickListener, View.OnKeyListener {
         })
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
-    }
-
     override fun onClick(v: View) {
         when (v.id) {
             R.id.button_save -> {
+                val title = binding.editTextTitle.text.toString()
+                val quantity = binding.editTextQuantity.text.toString().let {
+                    if (it == "") 1 else it.toInt()
+                }
+                val price = binding.editTextPrice.text.toString().let {
+                    if (it == "") 0f else it.toFloat()
+                }
+
                 val item = ItemModel(
-                    title = binding.editTextTitle.text.toString(),
-                    quantity = binding.editTextQuantity.text.toString()
-                        .let { if (it == "") 1 else it.toInt() },
-                    value = binding.editTextPrice.text.toString().let {
-                        if (it == "") 0f else it.toFloat()
-                    } as Float
+                    title = title,
+                    quantity = quantity,
+                    price = price
                 ).let { viewModel.save(it) }
                 hideKeyboard(v)
             }
@@ -84,6 +84,12 @@ class FormItemFragment : Fragment(), View.OnClickListener, View.OnKeyListener {
             }
         }
     }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
+
 
     override fun onKey(v: View, keyCode: Int, event: KeyEvent): Boolean = when (keyCode) {
         KeyEvent.KEYCODE_ENTER -> {

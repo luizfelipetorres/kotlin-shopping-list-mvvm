@@ -4,10 +4,10 @@ data class ItemModel(
     var id: Int = 0,
     var title: String,
     var quantity: Int,
-    var value: Float
+    var price: Float
 ) {
 
-    fun getTotalValue(): Float = value * quantity
+    fun getTotalValue(): Float = price * quantity
 
     /**
      * Constantes do banco de dados

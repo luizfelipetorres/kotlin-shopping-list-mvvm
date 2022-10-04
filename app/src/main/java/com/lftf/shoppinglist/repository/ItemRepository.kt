@@ -34,7 +34,7 @@ class ItemRepository private constructor(context: Context) {
         with(itemValues) {
             put(DB_COLUMNS.TITLE, item.title)
             put(DB_COLUMNS.QUANTITY, item.quantity)
-            put(DB_COLUMNS.VALUE, item.value)
+            put(DB_COLUMNS.VALUE, item.price)
         }
 
         Log.d("ItemRepository", "item adicionado: $item")
@@ -56,7 +56,7 @@ class ItemRepository private constructor(context: Context) {
                     id = cursor.getInt(cursor.getColumnIndex(DB_COLUMNS.ID).toInt()),
                     title = cursor.getString(cursor.getColumnIndex(DB_COLUMNS.TITLE).toInt()),
                     quantity = cursor.getInt(cursor.getColumnIndex(DB_COLUMNS.QUANTITY).toInt()),
-                    value = cursor.getFloat(cursor.getColumnIndex(DB_COLUMNS.VALUE).toInt())
+                    price = cursor.getFloat(cursor.getColumnIndex(DB_COLUMNS.VALUE).toInt())
                 )
                 itens.add(item)
             }
@@ -86,7 +86,7 @@ class ItemRepository private constructor(context: Context) {
         val content= ContentValues().apply {
             put(DB_COLUMNS.ID, item.id)
             put(DB_COLUMNS.TITLE, item.title)
-            put(DB_COLUMNS.VALUE, item.value)
+            put(DB_COLUMNS.VALUE, item.price)
             put(DB_COLUMNS.QUANTITY, item.quantity)
         }
 
