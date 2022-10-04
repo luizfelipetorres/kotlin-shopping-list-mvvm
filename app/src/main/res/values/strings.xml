@@ -12,7 +12,7 @@
     <string name="hint_quantity">Digite a quantidade</string>
     <string name="cancel">Cancelar</string>
     <string name="header_item">Item</string>
-    <string name="header_quantity">Quantidade</string>
+    <string name="header_quantity">Qtd</string>
     <string name="header_price">Valor</string>
     <string name="price">R$ %.2f</string>
     <string name="total_price">R$ %.2f\n(R$ %.2f)</string>

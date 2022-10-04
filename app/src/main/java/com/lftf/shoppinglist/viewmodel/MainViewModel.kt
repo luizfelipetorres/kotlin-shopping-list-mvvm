@@ -15,6 +15,31 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     private var msgString = MutableLiveData<String>()
     private val _totalAmount = MutableLiveData<Float>()
     val totalAmount: LiveData<Float> = _totalAmount
+    private val _lastItem = MutableLiveData<ItemModel?>()
+    private val _isSortUp = MutableLiveData<Boolean>(false)
+    fun lastItem(): LiveData<ItemModel?> = _lastItem
+
+    fun updateLastItem(item: ItemModel?) {
+        _lastItem.value = item
+    }
+
+    fun updateItem(item: ItemModel) {
+        repository.update(item)
+    }
+
+    fun sort() {
+        if (_isSortUp.value!!)
+            _list.value = _list.value?.sortedByDescending { itemModel -> itemModel.getTotalValue() }
+        else
+            _list.value = _list.value?.sortedBy { itemModel -> itemModel.getTotalValue() }
+    }
+
+    fun getSortIcon(): LiveData<Boolean> = _isSortUp
+
+    fun setSortIcon() {
+        _isSortUp.value = !(_isSortUp.value ?: true)
+        sort()
+    }
 
 
     fun getAll() {
@@ -24,7 +49,6 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
                 0f
             else
                 it.map { i -> i.getTotalValue() }.reduce { previous, current -> previous + current }
-
         }
         _totalAmount.value = allItens.let {
             if (it.isEmpty())

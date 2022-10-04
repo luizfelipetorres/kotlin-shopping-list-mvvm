@@ -1,9 +1,11 @@
 package com.lftf.shoppinglist.view
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
@@ -25,6 +27,7 @@ class ListFragment : Fragment(), View.OnClickListener {
     private val viewModel: MainViewModel by activityViewModels()
     private lateinit var adapter: ItemAdapter
     private val binding get() = _binding!!
+    private var sortIcon: Boolean = true
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -42,6 +45,7 @@ class ListFragment : Fragment(), View.OnClickListener {
         binding.fab.setOnClickListener(this)
 
         viewModel.getAll()
+        viewModel.updateLastItem(null)
 
         val listener = object : ItemListener {
             override fun onLongClick(id: Int): Boolean {
@@ -51,18 +55,29 @@ class ListFragment : Fragment(), View.OnClickListener {
 
             override fun onClick(item: ItemModel) {
                 findNavController().navigate(R.id.action_ListFragment_to_FormItemFragment)
+                viewModel.updateLastItem(item)
             }
         }
         adapter.attachListener(listener)
         binding.recyclerList.layoutManager = LinearLayoutManager(context)
         binding.recyclerList.adapter = adapter
 
+        binding.header.sortImg.setOnClickListener(this)
         setObservers()
     }
 
     private fun setObservers() {
         viewModel.listItens.observe(viewLifecycleOwner, Observer {
             adapter.updateList(it)
+        })
+
+        viewModel.getSortIcon().observe(viewLifecycleOwner, Observer {
+            binding.header.sortImg.setImageResource(
+                if (it)
+                    R.drawable.ic_arrow_up
+                else
+                    R.drawable.ic_arrow_down
+            )
         })
     }
 
@@ -74,6 +89,7 @@ class ListFragment : Fragment(), View.OnClickListener {
     override fun onClick(v: View) {
         when (v.id) {
             R.id.fab -> findNavController().navigate(R.id.action_ListFragment_to_FormItemFragment)
+            R.id.sort_img -> viewModel.setSortIcon()
         }
     }
 }

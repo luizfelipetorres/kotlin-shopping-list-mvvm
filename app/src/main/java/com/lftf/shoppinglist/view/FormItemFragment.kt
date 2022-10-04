@@ -13,6 +13,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
+import com.google.android.material.button.MaterialButton
 import com.google.android.material.snackbar.Snackbar
 import com.lftf.shoppinglist.R
 import com.lftf.shoppinglist.databinding.FragmentFormItemBinding
@@ -27,6 +28,7 @@ class FormItemFragment : Fragment(), View.OnClickListener, View.OnKeyListener {
     private var _binding: FragmentFormItemBinding? = null
     private val viewModel: MainViewModel by activityViewModels()
     private val binding get() = _binding!!
+    private var lastItem: ItemModel? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -53,6 +55,18 @@ class FormItemFragment : Fragment(), View.OnClickListener, View.OnKeyListener {
         viewModel.message().observe(viewLifecycleOwner, Observer {
             Snackbar.make(binding.root, it, Snackbar.LENGTH_LONG).show()
         })
+
+        viewModel.lastItem().observe(viewLifecycleOwner, Observer {
+            with(binding) {
+                if (it != null) {
+                    lastItem = it
+                    editTextTitle.setText(it.title)
+                    editTextPrice.setText(it.price.toString())
+                    editTextQuantity.setText(it.quantity.toString())
+                    buttonSave.text = "Atualizar"
+                }
+            }
+        })
     }
 
     override fun onClick(v: View) {
@@ -69,30 +83,34 @@ class FormItemFragment : Fragment(), View.OnClickListener, View.OnKeyListener {
                         if (it == "") 0f else it.toFloat()
                     }
 
-                    val item = ItemModel(title = title, quantity = quantity, price = price)
-
-                    viewModel.save(item)
+                    val item = ItemModel(id = lastItem?.id ?: 0, title = title, quantity = quantity, price = price)
+                    val materialButton = v as MaterialButton
+                    val isUpdate = materialButton.text.toString() == context?.getString(R.string.save)
+                    if (isUpdate)
+                        viewModel.save(item)
+                    else
+                        viewModel.updateItem(item)
                     manageKeyboard(v, show = false)
-                    buildSucessAlert(v)
+                    buildSucessAlert(v, isUpdate)
                     binding.textLayoutTitle.isErrorEnabled = false
-                }catch (e: Exception){
-                    with(binding.textLayoutTitle){
+                } catch (e: Exception) {
+                    with(binding.textLayoutTitle) {
                         error = e.message
                         isErrorEnabled = true
                     }
                 }
             }
             R.id.button_cancel -> findNavController().navigate(R.id.action_FormItemFragment_to_ListFragment)
-
         }
     }
 
-    private fun buildSucessAlert(v: View) {
+    private fun buildSucessAlert(v: View, isUpdate: Boolean) {
         AlertDialog.Builder(context)
-            .setTitle("Item cadastrado!")
+            .setTitle("Item ${if(isUpdate) "atualizado" else "cadastrado"}!")
             .setMessage("Deseja cadastrar mais um item OU voltar para a lista?")
             .setPositiveButton("Mais um") { _, _ ->
                 clearFields()
+                binding.buttonSave.text = context?.getString(R.string.save)
                 binding.editTextTitle.requestFocus()
                 manageKeyboard(v, true)
             }
@@ -108,7 +126,7 @@ class FormItemFragment : Fragment(), View.OnClickListener, View.OnKeyListener {
             binding.editTextPrice,
             binding.editTextQuantity
         ).forEach { i -> i.setText("") }
-
+        viewModel.updateLastItem(null)
     }
 
     override fun onDestroyView() {

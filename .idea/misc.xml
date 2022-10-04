@@ -15,6 +15,11 @@
         <entry key="..\:/Users/lfarias/AndroidStudioProjects/ShoppingList/app/src/main/res/layout/item.xml" value="0.18333333333333332" />
         <entry key="..\:/Users/lfarias/AndroidStudioProjects/ShoppingList/app/src/main/res/layout/row_item.xml" value="0.184375" />
         <entry key="..\:/Users/lfarias/AndroidStudioProjects/ShoppingList/app/src/main/res/menu/menu_main.xml" value="0.184375" />
+        <entry key="..\:/Users/luiz.torres/StudioProjects/kotlin-shopping-list-mvvm2/app/src/main/res/drawable/ic_arrow_down.xml" value="0.3405" />
+        <entry key="..\:/Users/luiz.torres/StudioProjects/kotlin-shopping-list-mvvm2/app/src/main/res/drawable/ic_arrow_up.xml" value="0.3405" />
+        <entry key="..\:/Users/luiz.torres/StudioProjects/kotlin-shopping-list-mvvm2/app/src/main/res/drawable/rectangle.xml" value="0.3405" />
+        <entry key="..\:/Users/luiz.torres/StudioProjects/kotlin-shopping-list-mvvm2/app/src/main/res/layout/fragment_list.xml" value="0.36666666666666664" />
+        <entry key="..\:/Users/luiz.torres/StudioProjects/kotlin-shopping-list-mvvm2/app/src/main/res/layout/header_list.xml" value="0.36666666666666664" />
       </map>
     </option>
   </component>

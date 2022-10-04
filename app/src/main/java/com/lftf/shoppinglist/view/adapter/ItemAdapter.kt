@@ -31,15 +31,23 @@ class ItemAdapter(val context: Context) : RecyclerView.Adapter<ItemAdapter.ItemV
             binding.itemPrice.text = strPrice
 
             val lightRed = Color.argb(50, 255, 0, 0)
-            if (model.price == 0f)
-                binding.linearItem.setBackgroundColor(lightRed)
+            binding.linearItem.setBackgroundColor(
+                if (model.price == 0f)
+                    lightRed
+                else
+                    Color.WHITE
+            )
 
-            binding.root.setOnLongClickListener {
-                listener.onLongClick(model.id)
-                notifyDataSetChanged()
-                true
+            with(binding.root) {
+                setOnLongClickListener {
+                    listener.onLongClick(model.id)
+                    notifyDataSetChanged()
+                    true
+                }
+                setOnClickListener {
+                    listener.onClick(model)
+                }
             }
-
         }
     }
 
@@ -59,9 +67,7 @@ class ItemAdapter(val context: Context) : RecyclerView.Adapter<ItemAdapter.ItemV
         notifyDataSetChanged()
     }
 
-    fun attachListener(listener: ItemListener){
+    fun attachListener(listener: ItemListener) {
         this.listener = listener
     }
-
-
 }
