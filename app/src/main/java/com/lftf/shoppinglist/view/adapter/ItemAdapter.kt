@@ -3,18 +3,21 @@ package com.lftf.shoppinglist.view.adapter
 import android.content.Context
 import android.graphics.Color
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.google.android.material.snackbar.Snackbar
 import com.lftf.shoppinglist.R
 import com.lftf.shoppinglist.databinding.RowItemBinding
 import com.lftf.shoppinglist.model.ItemModel
+import com.lftf.shoppinglist.view.listener.ItemListener
 
 class ItemAdapter(val context: Context) : RecyclerView.Adapter<ItemAdapter.ItemViewHolder>() {
+    private lateinit var listener: ItemListener
     private var itensList: List<ItemModel> = listOf()
 
-    inner class ItemViewHolder(private val binding: RowItemBinding) :
+    inner class ItemViewHolder(
+        private val binding: RowItemBinding,
+        private val listener: ItemListener
+    ) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(model: ItemModel) {
 
@@ -31,15 +34,18 @@ class ItemAdapter(val context: Context) : RecyclerView.Adapter<ItemAdapter.ItemV
             if (model.price == 0f)
                 binding.linearItem.setBackgroundColor(lightRed)
 
-            binding.root.setOnClickListener(View.OnClickListener {
-                Snackbar.make(it, "Cliquei em ${model.title}", Snackbar.LENGTH_LONG).show()
-            })
+            binding.root.setOnLongClickListener {
+                listener.onLongClick(model.id)
+                notifyDataSetChanged()
+                true
+            }
+
         }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemViewHolder {
         val binding = RowItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-        return ItemViewHolder(binding)
+        return ItemViewHolder(binding, listener)
     }
 
     override fun onBindViewHolder(holder: ItemViewHolder, position: Int) {
@@ -51,6 +57,10 @@ class ItemAdapter(val context: Context) : RecyclerView.Adapter<ItemAdapter.ItemV
     fun updateList(list: List<ItemModel>) {
         itensList = list
         notifyDataSetChanged()
+    }
+
+    fun attachListener(listener: ItemListener){
+        this.listener = listener
     }
 
 
