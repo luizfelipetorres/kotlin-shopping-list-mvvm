@@ -40,9 +40,10 @@ class ItemAdapter(val context: Context) : RecyclerView.Adapter<ItemAdapter.ItemV
 
             with(binding.root) {
                 setOnLongClickListener {
-                    listener.onLongClick(model.id)
-                    notifyDataSetChanged()
-                    true
+                    listener.onLongClick(model.id) {
+                        notifyItemRemoved(adapterPosition)
+                        notifyItemRangeChanged(adapterPosition, itemCount)
+                    }
                 }
                 setOnClickListener {
                     listener.onClick(model)

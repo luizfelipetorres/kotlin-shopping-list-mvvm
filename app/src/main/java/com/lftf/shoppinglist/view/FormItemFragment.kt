@@ -3,6 +3,8 @@ package com.lftf.shoppinglist.view
 import android.app.AlertDialog
 import android.content.Context.INPUT_METHOD_SERVICE
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
@@ -11,10 +13,7 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
-import com.google.android.material.button.MaterialButton
-import com.google.android.material.snackbar.Snackbar
 import com.lftf.shoppinglist.R
 import com.lftf.shoppinglist.databinding.FragmentFormItemBinding
 import com.lftf.shoppinglist.model.ItemModel
@@ -33,7 +32,7 @@ class FormItemFragment : Fragment(), View.OnClickListener, View.OnKeyListener {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
 
         _binding = FragmentFormItemBinding.inflate(inflater, container, false)
         return binding.root
@@ -42,31 +41,75 @@ class FormItemFragment : Fragment(), View.OnClickListener, View.OnKeyListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        setClickListeners()
+
+        setTextChangedListener()
+
+        binding.editTextQuantity.setOnKeyListener(this)
+
+        setObservers()
+    }
+
+    private fun setTextChangedListener() {
+        arrayOf(
+            binding.editTextQuantity,
+            binding.editTextPrice
+        ).forEach {
+            it.addTextChangedListener(object : TextWatcher {
+                override fun beforeTextChanged(
+                    s: CharSequence?,
+                    start: Int,
+                    count: Int,
+                    after: Int
+                ) {
+                }
+
+                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+
+                override fun afterTextChanged(s: Editable?) {
+                    with(binding) {
+                        val price = editTextPrice.text.toString().let { p ->
+                            if (p.isEmpty()) 0f else p.toFloat()
+                        }
+                        val quantity = editTextQuantity.text.toString().let { q ->
+                            if (q.isEmpty()) 1 else q.toInt()
+                        }
+
+                        val total = price * quantity
+                        if (total > 0) {
+                            getString(R.string.text_view_total_price).format(total).let { str ->
+                                textViewTotalPrice.text = str
+                            }
+                        }else{
+                            textViewTotalPrice.text = ""
+                        }
+
+                    }
+                }
+            })
+        }
+    }
+
+    private fun setClickListeners() {
         arrayOf(
             binding.buttonSave,
             binding.buttonCancel
         ).forEach { i -> i.setOnClickListener(this) }
-
-        binding.editTextQuantity.setOnKeyListener(this)
-        setObservers()
     }
 
     private fun setObservers() {
-        viewModel.message().observe(viewLifecycleOwner, Observer {
-            Snackbar.make(binding.root, it, Snackbar.LENGTH_LONG).show()
-        })
-
-        viewModel.lastItem().observe(viewLifecycleOwner, Observer {
+        viewModel.lastItem().observe(viewLifecycleOwner) {
             with(binding) {
                 if (it != null) {
                     lastItem = it
                     editTextTitle.setText(it.title)
-                    editTextPrice.setText(it.price.toString())
-                    editTextQuantity.setText(it.quantity.toString())
-                    buttonSave.text = "Atualizar"
+                    editTextPrice.setText(it.price.toString().let { if (it == "0.0") "" else it })
+                    editTextQuantity.setText(
+                        it.quantity.toString().let { if (it == "1") "" else it })
+                    buttonSave.text = getString(R.string.update)
                 }
             }
-        })
+        }
     }
 
     override fun onClick(v: View) {
@@ -83,15 +126,15 @@ class FormItemFragment : Fragment(), View.OnClickListener, View.OnKeyListener {
                         if (it == "") 0f else it.toFloat()
                     }
 
-                    val item = ItemModel(id = lastItem?.id ?: 0, title = title, quantity = quantity, price = price)
-                    val materialButton = v as MaterialButton
-                    val isUpdate = materialButton.text.toString() == context?.getString(R.string.save)
-                    if (isUpdate)
-                        viewModel.save(item)
-                    else
-                        viewModel.updateItem(item)
+                    ItemModel(
+                        id = lastItem?.id ?: 0,
+                        title = title,
+                        quantity = quantity,
+                        price = price
+                    ).also { viewModel.save(it) }
+
                     manageKeyboard(v, show = false)
-                    buildSucessAlert(v, isUpdate)
+                    buildSucessAlert(v)
                     binding.textLayoutTitle.isErrorEnabled = false
                 } catch (e: Exception) {
                     with(binding.textLayoutTitle) {
@@ -104,17 +147,17 @@ class FormItemFragment : Fragment(), View.OnClickListener, View.OnKeyListener {
         }
     }
 
-    private fun buildSucessAlert(v: View, isUpdate: Boolean) {
+    private fun buildSucessAlert(v: View) {
         AlertDialog.Builder(context)
-            .setTitle("Item ${if(isUpdate) "atualizado" else "cadastrado"}!")
-            .setMessage("Deseja cadastrar mais um item OU voltar para a lista?")
-            .setPositiveButton("Mais um") { _, _ ->
+            .setTitle(getString(R.string.alert_title_item_saved))
+            .setMessage(getString(R.string.alert_msg_item_saved))
+            .setPositiveButton(getString(R.string.alert_positive_button_item_saved)) { _, _ ->
                 clearFields()
                 binding.buttonSave.text = context?.getString(R.string.save)
                 binding.editTextTitle.requestFocus()
                 manageKeyboard(v, true)
             }
-            .setNegativeButton("Voltar") { _, _ ->
+            .setNegativeButton(getString(R.string.alert_negative_button_item_saved)) { _, _ ->
                 findNavController().navigate(R.id.action_FormItemFragment_to_ListFragment)
             }
             .show()

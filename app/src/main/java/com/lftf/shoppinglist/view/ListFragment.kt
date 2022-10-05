@@ -6,10 +6,8 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.Snackbar
@@ -23,18 +21,20 @@ import com.lftf.shoppinglist.viewmodel.MainViewModel
 /**
  * A simple [Fragment] subclass as the default destination in the navigation.
  */
+const val TAG = "ListFragment"
+
 class ListFragment : Fragment(), View.OnClickListener {
 
     private var _binding: FragmentListBinding? = null
     private val viewModel: MainViewModel by activityViewModels()
     private lateinit var adapter: ItemAdapter
     private val binding get() = _binding!!
-    private var sortIcon: Boolean = true
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
 
         _binding = FragmentListBinding.inflate(inflater, container, false)
         adapter = ItemAdapter(requireContext().applicationContext)
@@ -46,19 +46,20 @@ class ListFragment : Fragment(), View.OnClickListener {
         super.onViewCreated(view, savedInstanceState)
         binding.fab.setOnClickListener(this)
 
-        viewModel.getAll()
         viewModel.updateLastItem(null)
 
         val listener = object : ItemListener {
-            override fun onLongClick(id: Int): Boolean {
+            override fun onLongClick(id: Int, callback: () -> Unit): Boolean {
                 AlertDialog.Builder(context)
                     .setTitle("Excluir item")
                     .setMessage("Tem certeza que deseja excluir?")
                     .setPositiveButton("Sim") { _, _ ->
                         viewModel.delete(id)
-                        true
+                        callback
                     }
-                    .setNegativeButton("Não") { _, _ -> false }
+                    .setNegativeButton("Não") { _, _ ->
+
+                    }
                     .show()
                 return true
             }
@@ -72,34 +73,66 @@ class ListFragment : Fragment(), View.OnClickListener {
         binding.recyclerList.layoutManager = LinearLayoutManager(context)
         binding.recyclerList.adapter = adapter
 
-        binding.header.sortImg.setOnClickListener(this)
+        with(binding.header) {
+            arrayOf(
+                sortPriceImg, relativePrice, headerPrice,
+                headerTitle, relativeTitle, sortTitleImg
+            ).forEach { i ->
+                i.setOnClickListener(
+                    this@ListFragment
+                )
+            }
+        }
         setObservers()
     }
 
     private fun setObservers() {
-        viewModel.listItens.observe(viewLifecycleOwner, Observer {
-            adapter.updateList(it)
-        })
+        val setImage = { bool: Boolean? ->
+            when (bool) {
+                true -> R.drawable.ic_arrow_up
+                false -> R.drawable.ic_arrow_down
+                else -> R.drawable.ic_remove
+            }
+        }
+        viewModel.getSortPrice().observe(viewLifecycleOwner) {
+            binding.header.sortPriceImg.setImageResource(setImage(it))
+        }
 
-        viewModel.getSortIcon().observe(viewLifecycleOwner, Observer {
-            binding.header.sortImg.setImageResource(
-                if (it)
-                    R.drawable.ic_arrow_up
-                else
-                    R.drawable.ic_arrow_down
-            )
-        })
+        viewModel.getSortTitle().observe(viewLifecycleOwner) {
+            binding.header.sortTitleImg.setImageResource(setImage(it))
+        }
+
+        viewModel.listItens.observe(viewLifecycleOwner) {
+            adapter.updateList(it)
+        }
+
+        viewModel.message().observe(viewLifecycleOwner) {
+            it?.let { string ->
+                Snackbar.make(
+                    requireView().context,
+                    binding.root,
+                    string,
+                    Snackbar.LENGTH_LONG
+                ).show()
+            }
+        }
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+        Log.d(TAG, "onDestroy")
     }
 
     override fun onClick(v: View) {
         when (v.id) {
             R.id.fab -> findNavController().navigate(R.id.action_ListFragment_to_FormItemFragment)
-            R.id.sort_img -> viewModel.setSortIcon()
+            R.id.relative_price, R.id.sort_price_img, R.id.header_price -> viewModel.setSortIcon(
+                MainViewModel.SortOptions.PRICE
+            )
+            R.id.relative_title, R.id.sort_title_img, R.id.header_title -> viewModel.setSortIcon(
+                MainViewModel.SortOptions.TITLE
+            )
         }
     }
 }

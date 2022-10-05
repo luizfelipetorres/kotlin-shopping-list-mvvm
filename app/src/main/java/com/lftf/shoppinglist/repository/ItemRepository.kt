@@ -64,12 +64,11 @@ class ItemRepository private constructor(context: Context) {
         return itens
     }
 
-    fun getItem(id: Int): ItemModel{
-        val db = dbHelper.readableDatabase
-
-        val list = getItens()
-        return list.filter { item -> item.id == id }.single()
-    }
+//    fun getItem(id: Int): ItemModel{
+//
+//        val list = getItens()
+//        return list.filter { item -> item.id == id }.single()
+//    }
 
     fun delete(id: Int): Int {
         val db = dbHelper.writableDatabase
