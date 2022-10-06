@@ -13,23 +13,25 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         TITLE
     }
 
-    val string: String = "teste"
     private val repository = ItemRepository.getInstance(application.applicationContext)
-    private val _list = MutableLiveData<List<ItemModel>>()
-    val listItens: LiveData<List<ItemModel>> = _list
 
-    private var msgString = MutableLiveData<String?>()
+    private val _list = MutableLiveData<List<ItemModel>>()
+    val list: LiveData<List<ItemModel>> = _list
+
+    private var _message = MutableLiveData<String?>()
+    val message: LiveData<String?> = _message
+
     private val _totalAmount = MutableLiveData<Float>()
     val totalAmount: LiveData<Float> = _totalAmount
+
     private val _lastItem = MutableLiveData<ItemModel?>()
+    val lastItem: LiveData<ItemModel?> = _lastItem
 
     private val _sortPrice = MutableLiveData<Boolean?>()
+    val sortPrice: LiveData<Boolean?> = _sortPrice
+
     private val _sortTitle = MutableLiveData<Boolean?>()
-
-
-    fun lastItem(): LiveData<ItemModel?> = _lastItem
-    fun getSortPrice(): LiveData<Boolean?> = _sortPrice
-    fun getSortTitle(): LiveData<Boolean?> = _sortTitle
+    val sortTitle: LiveData<Boolean?> = _sortTitle
 
     fun updateLastItem(item: ItemModel?) {
         _lastItem.value = item
@@ -107,11 +109,9 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     private fun message(msg: String) {
-        msgString.value = msg
-        msgString.value = null
+        _message.value = msg
+        _message.value = null
     }
-
-    fun message(): LiveData<String?> = msgString
 
     fun save(item: ItemModel) {
         if (item.id == 0)

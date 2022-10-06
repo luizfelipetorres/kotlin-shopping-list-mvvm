@@ -94,19 +94,19 @@ class ListFragment : Fragment(), View.OnClickListener {
                 else -> R.drawable.ic_remove
             }
         }
-        viewModel.getSortPrice().observe(viewLifecycleOwner) {
+        viewModel.sortPrice.observe(viewLifecycleOwner) {
             binding.header.sortPriceImg.setImageResource(setImage(it))
         }
 
-        viewModel.getSortTitle().observe(viewLifecycleOwner) {
+        viewModel.sortTitle.observe(viewLifecycleOwner) {
             binding.header.sortTitleImg.setImageResource(setImage(it))
         }
 
-        viewModel.listItens.observe(viewLifecycleOwner) {
+        viewModel.list.observe(viewLifecycleOwner) {
             adapter.updateList(it)
         }
 
-        viewModel.message().observe(viewLifecycleOwner) {
+        viewModel.message.observe(viewLifecycleOwner) {
             it?.let { string ->
                 Snackbar.make(
                     requireView().context,
