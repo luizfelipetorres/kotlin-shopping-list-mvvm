@@ -37,58 +37,52 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         _lastItem.value = item
     }
 
-    private fun sort(sortedBy: SortOptions?) {
-        _list.value = when (sortedBy) {
-            SortOptions.PRICE -> {
-                _list.value?.let {
-                    when (_sortPrice.value) {
-                        true -> it.sortedBy { itemModel -> itemModel.getTotalValue() }
-                        false -> it.sortedByDescending { itemModel -> itemModel.getTotalValue() }
-                        else -> it.sortedBy { itemModel -> itemModel.id }
-                    }
+    private fun sort() {
+        _list.value = _list.value?.let {
+            if (_sortPrice.value != null) {
+                when (_sortPrice.value) {
+                    true -> it.sortedBy { item -> item.getTotalValue() }
+                    else -> it.sortedByDescending { item -> item.getTotalValue() }
                 }
-            }
-            SortOptions.TITLE -> {
-                _list.value?.let {
-                    when (_sortTitle.value) {
-                        true -> it.sortedBy { itemModel -> itemModel.title }
-                        false -> it.sortedByDescending { itemModel -> itemModel.title }
-                        else -> it.sortedBy { itemModel -> itemModel.id }
-                    }
+            } else if (_sortTitle.value != null) {
+                when (_sortTitle.value) {
+                    true -> it.sortedBy { item -> item.title }
+                    else -> it.sortedByDescending { item -> item.title }
                 }
+            } else {
+                it.sortedBy { item -> item.id }
             }
-            else -> _list.value
         }
     }
 
-    fun setSortIcon(sortBy: SortOptions) {
-        val handleSort = { bool: Boolean? ->
-            when (bool) {
-                true -> false
-                false -> null
-                else -> true
-            }
-        }
+    private fun changeSort(value: Boolean?): Boolean? = when (value) {
+        null -> true
+        true -> false
+        else -> null
+    }
 
-        var stringMessage: String? = null
-        when (sortBy) {
-            SortOptions.PRICE -> {
-                _sortPrice.value = handleSort(_sortPrice.value)
-                _sortTitle.value = null
-                stringMessage = _sortPrice.value?.let {
-                    "Ordenando preço por ordem ${if (it) "crescente" else "decrescente"}"
-                }
-            }
-            SortOptions.TITLE -> {
-                _sortTitle.value = handleSort(_sortTitle.value)
-                _sortPrice.value = null
-                stringMessage = _sortTitle.value?.let {
-                    "Ordenando titulo por ordem ${if (it) "crescente" else "decrescente"}"
-                }
+    fun changeSortPrice() {
+        _sortPrice.value = _sortPrice.value.let {
+            changeSort(it)?.also { res ->
+                message("Ordenando preço por ordem ${if (res) "crescente" else "decrescente"}")
             }
         }
-        stringMessage?.let { message(it) }
-        sort(sortBy)
+        if (_sortTitle.value != null){
+            _sortTitle.value = null
+        }
+        sort()
+    }
+
+    fun changeSortTitle() {
+        _sortTitle.value = _sortTitle.value.let {
+            changeSort(it)?.also { res ->
+                message("Ordenando título por ordem alfabética ${if (res) "" else "inversa"}")
+            }
+        }
+        if (_sortPrice.value != null){
+            _sortPrice.value = null
+        }
+        sort()
     }
 
     fun getAll() {
@@ -116,7 +110,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     fun save(item: ItemModel) {
         if (item.id == 0)
             repository.save(item)
-        else{
+        else {
             repository.update(item)
         }.also {
             getAll()

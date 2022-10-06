@@ -46,7 +46,6 @@ class ListFragment : Fragment(), View.OnClickListener {
         super.onViewCreated(view, savedInstanceState)
         binding.fab.setOnClickListener(this)
 
-        viewModel.updateLastItem(null)
 
         val listener = object : ItemListener {
             override fun onLongClick(id: Int, callback: () -> Unit): Boolean {
@@ -84,6 +83,13 @@ class ListFragment : Fragment(), View.OnClickListener {
             }
         }
         setObservers()
+    }
+
+    override fun onResume() {
+        super.onResume()
+
+
+        viewModel.updateLastItem(null)
     }
 
     private fun setObservers() {
@@ -127,12 +133,8 @@ class ListFragment : Fragment(), View.OnClickListener {
     override fun onClick(v: View) {
         when (v.id) {
             R.id.fab -> findNavController().navigate(R.id.action_ListFragment_to_FormItemFragment)
-            R.id.relative_price, R.id.sort_price_img, R.id.header_price -> viewModel.setSortIcon(
-                MainViewModel.SortOptions.PRICE
-            )
-            R.id.relative_title, R.id.sort_title_img, R.id.header_title -> viewModel.setSortIcon(
-                MainViewModel.SortOptions.TITLE
-            )
+            R.id.relative_price, R.id.sort_price_img, R.id.header_price -> viewModel.changeSortPrice()
+            R.id.relative_title, R.id.sort_title_img, R.id.header_title -> viewModel.changeSortTitle()
         }
     }
 }

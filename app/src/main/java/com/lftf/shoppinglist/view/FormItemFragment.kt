@@ -158,7 +158,7 @@ class FormItemFragment : Fragment(), View.OnClickListener, View.OnKeyListener {
                 manageKeyboard(v, true)
             }
             .setNegativeButton(getString(R.string.alert_negative_button_item_saved)) { _, _ ->
-                findNavController().backQueue
+                findNavController().navigate(R.id.action_FormItemFragment_to_ListFragment)
 
             }
             .show()
