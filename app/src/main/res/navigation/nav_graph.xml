@@ -4,17 +4,15 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
     app:startDestination="@id/ListFragment">
-
     <fragment
-        android:id="@+id/ListFragment"
-        android:name="com.lftf.shoppinglist.view.ListFragment"
-        android:label="@string/list_fragment_label"
-        tools:layout="@layout/fragment_list">
+        android:id="@+id/MoneyFragment"
+        android:name="com.lftf.shoppinglist.view.MoneyFragment"
+        android:label="@string/money_fragment_label"
+        tools:layout="@layout/fragment_form_item">
 
-        <action
-            android:id="@+id/action_ListFragment_to_FormItemFragment"
-            app:destination="@id/FormItemFragment" />
     </fragment>
+
+
     <fragment
         android:id="@+id/FormItemFragment"
         android:name="com.lftf.shoppinglist.view.FormItemFragment"
@@ -23,6 +21,25 @@
 
         <action
             android:id="@+id/action_FormItemFragment_to_ListFragment"
-            app:destination="@id/ListFragment" />
+            app:destination="@id/ListFragment"
+            app:popUpTo="@id/ListFragment"
+            app:popUpToInclusive="true" />
+        <action
+            android:id="@+id/action_ListFragment_to_MoneyFragment"
+            app:destination="@id/MoneyFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/ListFragment"
+        android:name="com.lftf.shoppinglist.view.ListFragment"
+        android:label="@string/list_fragment_label"
+        tools:layout="@layout/fragment_list">
+
+        <action
+            android:id="@+id/action_ListFragment_to_MoneyFragment"
+            app:destination="@id/MoneyFragment" />
+        <action
+            android:id="@+id/action_ListFragment_to_FormItemFragment"
+            app:destination="@id/FormItemFragment"
+            app:popUpTo="@drawable/ic_arrow_down" />
     </fragment>
 </navigation>
