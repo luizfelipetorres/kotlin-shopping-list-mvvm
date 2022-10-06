@@ -8,7 +8,9 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.Snackbar
 import com.lftf.shoppinglist.R
 import com.lftf.shoppinglist.databinding.FragmentListBinding
@@ -40,6 +42,7 @@ class ListFragment : Fragment(), View.OnClickListener {
 
         val listener = object : ItemListener {
             override fun onLongClick(id: Int, callback: () -> Unit): Boolean {
+                return true
                 AlertDialog.Builder(context)
                     .setTitle("Excluir item")
                     .setMessage("Tem certeza que deseja excluir?")
@@ -51,7 +54,7 @@ class ListFragment : Fragment(), View.OnClickListener {
 
                     }
                     .show()
-                return true
+
             }
 
             override fun onClick(item: ItemModel) {
@@ -62,6 +65,27 @@ class ListFragment : Fragment(), View.OnClickListener {
         adapter.attachListener(listener)
         binding.recyclerList.layoutManager = LinearLayoutManager(context)
         binding.recyclerList.adapter = adapter
+
+        val ith = object :
+            ItemTouchHelper.SimpleCallback(
+                0,
+                ItemTouchHelper.END
+            ) {
+            override fun onMove(
+                recyclerView: RecyclerView,
+                viewHolder: RecyclerView.ViewHolder,
+                target: RecyclerView.ViewHolder
+            ): Boolean {
+                TODO("Not yet implemented")
+            }
+
+            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+                viewHolder.adapterPosition.let { viewModel.deleteByPosition(it) }
+            }
+        }
+
+        val itemTouchHelper =
+            ItemTouchHelper(ith).let { it.attachToRecyclerView(binding.recyclerList) }
 
         with(binding.header) {
             arrayOf(

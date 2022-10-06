@@ -122,4 +122,8 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
             getAll()
         }
     }
+
+    fun deleteByPosition(position: Int){
+        repository.delete(_list.value?.get(position)?.id ?: 0)
+    }
 }
