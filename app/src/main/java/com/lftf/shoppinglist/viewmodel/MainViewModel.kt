@@ -8,12 +8,8 @@ import com.lftf.shoppinglist.model.ItemModel
 import com.lftf.shoppinglist.repository.ItemRepository
 
 class MainViewModel(application: Application) : AndroidViewModel(application) {
-    enum class SortOptions {
-        PRICE,
-        TITLE
-    }
 
-    private val repository = ItemRepository.getInstance(application.applicationContext)
+    private val repository = ItemRepository(application.applicationContext)
 
     private val _list = MutableLiveData<List<ItemModel>>()
     val list: LiveData<List<ItemModel>> = _list
@@ -67,7 +63,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
                 message("Ordenando preço por ordem ${if (res) "crescente" else "decrescente"}")
             }
         }
-        if (_sortTitle.value != null){
+        if (_sortTitle.value != null) {
             _sortTitle.value = null
         }
         sort()
@@ -79,27 +75,26 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
                 message("Ordenando título por ordem alfabética ${if (res) "" else "inversa"}")
             }
         }
-        if (_sortPrice.value != null){
+        if (_sortPrice.value != null) {
             _sortPrice.value = null
         }
         sort()
     }
 
+    private fun updateTotalAmount() {
+        _totalAmount.value = _list.value?.toMutableList()?.let {
+            if (it.isEmpty())
+                0f
+            else
+                it.map { i -> i.getTotalValue() }.reduce { previous, current -> previous + current }
+        }
+    }
+
     fun getAll() {
         val allItens = repository.getItens()
-        allItens.let {
-            if (it.isEmpty())
-                0f
-            else
-                it.map { i -> i.getTotalValue() }.reduce { previous, current -> previous + current }
-        }
-        _totalAmount.value = allItens.let {
-            if (it.isEmpty())
-                0f
-            else
-                it.map { i -> i.getTotalValue() }.reduce { previous, current -> previous + current }
-        }
         _list.value = allItens
+        updateTotalAmount()
+        sort()
     }
 
     private fun message(msg: String) {
@@ -119,11 +114,12 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
 
     fun delete(id: Int) {
         repository.delete(id).let {
-            _list.value = _list.value?.filter { i -> i.id != id }
-            if (it == 1)
+            if (it)
                 message("Excluído com sucesso!")
             else
                 message("Falha ao excluir")
+        }.also {
+            getAll()
         }
     }
 }

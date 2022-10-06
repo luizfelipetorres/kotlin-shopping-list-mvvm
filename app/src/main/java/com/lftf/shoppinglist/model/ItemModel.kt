@@ -1,25 +1,24 @@
 package com.lftf.shoppinglist.model
 
-data class ItemModel(
-    var id: Int = 0,
-    var title: String,
-    var quantity: Int,
-    var price: Float
-) {
+import androidx.room.ColumnInfo
+import androidx.room.Entity
+import androidx.room.PrimaryKey
+
+@Entity(tableName = "tb_item")
+class ItemModel{
+
+    @PrimaryKey(autoGenerate = true)
+    @ColumnInfo
+    var id: Int = 0
+
+    @ColumnInfo
+    var title: String = ""
+
+    @ColumnInfo
+    var quantity: Int = 1
+
+    @ColumnInfo
+    var price: Float = 0f
 
     fun getTotalValue(): Float = price * quantity
-
-    /**
-     * Constantes do banco de dados
-     */
-    object DatabaseDefinition {
-        const val TABLE_NAME = "tb_item"
-
-        object Columns {
-            const val ID = "id"
-            const val TITLE = "title"
-            const val QUANTITY = "quantity"
-            const val VALUE = "value"
-        }
-    }
 }

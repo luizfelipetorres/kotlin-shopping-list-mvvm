@@ -126,12 +126,12 @@ class FormItemFragment : Fragment(), View.OnClickListener, View.OnKeyListener {
                         if (it == "") 0f else it.toFloat()
                     }
 
-                    ItemModel(
-                        id = lastItem?.id ?: 0,
-                        title = title,
-                        quantity = quantity,
-                        price = price
-                    ).also { viewModel.save(it) }
+                    ItemModel().apply {
+                        this.id = lastItem?.id ?: 0
+                        this.title = title
+                        this.quantity = quantity
+                        this.price = price
+                    }.also { viewModel.save(it) }
 
                     manageKeyboard(v, show = false)
                     buildSucessAlert(v)

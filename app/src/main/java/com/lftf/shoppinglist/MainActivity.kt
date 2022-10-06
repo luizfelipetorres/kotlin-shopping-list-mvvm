@@ -35,7 +35,6 @@ class MainActivity : AppCompatActivity() {
         navController = findNavController(R.id.nav_host_fragment_content_main)
         appBarConfiguration = AppBarConfiguration(navController.graph)
         setupActionBarWithNavController(navController, appBarConfiguration)
-
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -46,7 +45,6 @@ class MainActivity : AppCompatActivity() {
             val strTotal = getString(R.string.price).format(it)
             menu.findItem(R.id.total_price).title = strTotal
         }
-
         return true
     }
 

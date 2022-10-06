@@ -2,7 +2,6 @@ package com.lftf.shoppinglist.view
 
 import android.app.AlertDialog
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -18,18 +17,12 @@ import com.lftf.shoppinglist.view.adapter.ItemAdapter
 import com.lftf.shoppinglist.view.listener.ItemListener
 import com.lftf.shoppinglist.viewmodel.MainViewModel
 
-/**
- * A simple [Fragment] subclass as the default destination in the navigation.
- */
-const val TAG = "ListFragment"
-
 class ListFragment : Fragment(), View.OnClickListener {
 
     private var _binding: FragmentListBinding? = null
     private val viewModel: MainViewModel by activityViewModels()
     private lateinit var adapter: ItemAdapter
     private val binding get() = _binding!!
-
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -39,13 +32,11 @@ class ListFragment : Fragment(), View.OnClickListener {
         _binding = FragmentListBinding.inflate(inflater, container, false)
         adapter = ItemAdapter(requireContext().applicationContext)
         return binding.root
-
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.fab.setOnClickListener(this)
-
 
         val listener = object : ItemListener {
             override fun onLongClick(id: Int, callback: () -> Unit): Boolean {
@@ -87,8 +78,6 @@ class ListFragment : Fragment(), View.OnClickListener {
 
     override fun onResume() {
         super.onResume()
-
-
         viewModel.updateLastItem(null)
     }
 
@@ -127,7 +116,6 @@ class ListFragment : Fragment(), View.OnClickListener {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
-        Log.d(TAG, "onDestroy")
     }
 
     override fun onClick(v: View) {
