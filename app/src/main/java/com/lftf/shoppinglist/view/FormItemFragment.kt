@@ -155,7 +155,6 @@ class FormItemFragment : Fragment(), View.OnClickListener, View.OnKeyListener {
                 clearFields()
                 binding.buttonSave.text = context?.getString(R.string.save)
                 binding.editTextTitle.requestFocus()
-                manageKeyboard(v, true)
             }
             .setNegativeButton(getString(R.string.alert_negative_button_item_saved)) { _, _ ->
                 findNavController().navigate(R.id.action_FormItemFragment_to_ListFragment)
