@@ -6,7 +6,6 @@ import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import androidx.activity.result.ActivityResultLauncher
-import androidx.activity.result.contract.ActivityResultContract
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -34,20 +33,17 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-
-
-
         setSupportActionBar(binding.toolbar)
-
-        permissionLauncher = registerForActivityResult(ActivityResultContracts.RequestPermission()) {
-            isPermissionGranted = it ?: isPermissionGranted
-        }
-
-        checkPermissions()
-
         navController = findNavController(R.id.nav_host_fragment_content_main)
         appBarConfiguration = AppBarConfiguration(navController.graph)
         setupActionBarWithNavController(navController, appBarConfiguration)
+
+        permissionLauncher =
+            registerForActivityResult(ActivityResultContracts.RequestPermission()) {
+                isPermissionGranted = it ?: isPermissionGranted
+            }
+
+        checkPermissions()
     }
 
     override fun onResume() {
@@ -63,7 +59,7 @@ class MainActivity : AppCompatActivity() {
             ) == PackageManager.PERMISSION_GRANTED
 
 
-        if (!isPermissionGranted){
+        if (!isPermissionGranted) {
             permissionLauncher.launch(android.Manifest.permission.READ_CONTACTS)
         }
 
@@ -76,14 +72,14 @@ class MainActivity : AppCompatActivity() {
 
         menu.findItem(R.id.total_price).setOnMenuItemClickListener { item ->
             navController.navigate(R.id.action_ListFragment_to_MoneyFragment)
-            true
+            false
         }
 
         listViewModel.totalAmount.observe(this) {
             val strTotal = getString(R.string.price).format(it)
             menu.findItem(R.id.total_price).title = strTotal
         }
-        return true
+        return false
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
