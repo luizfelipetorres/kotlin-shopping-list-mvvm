@@ -18,6 +18,8 @@ import com.lftf.shoppinglist.R
 import com.lftf.shoppinglist.databinding.FragmentFormItemBinding
 import com.lftf.shoppinglist.model.ItemModel
 import com.lftf.shoppinglist.viewmodel.MainViewModel
+import java.text.NumberFormat
+import java.util.*
 
 /**
  * A simple [Fragment] subclass as the second destination in the navigation.
@@ -28,6 +30,7 @@ class FormItemFragment : Fragment(), View.OnClickListener, View.OnKeyListener {
     private val viewModel: MainViewModel by activityViewModels()
     private val binding get() = _binding!!
     private var lastItem: ItemModel? = null
+    private val regexPrice: Regex = """[R,$.]""".toRegex()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -40,7 +43,6 @@ class FormItemFragment : Fragment(), View.OnClickListener, View.OnKeyListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         setClickListeners()
 
         setTextChangedListener()
@@ -50,43 +52,83 @@ class FormItemFragment : Fragment(), View.OnClickListener, View.OnKeyListener {
         setObservers()
     }
 
+    private fun getTextWatcherPrice() = object : TextWatcher {
+        private var current = ""
+        override fun beforeTextChanged(
+            s: CharSequence?,
+            start: Int,
+            count: Int,
+            after: Int
+        ) {
+        }
+
+        override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+
+            if (s.toString() != current) {
+                binding.editTextPrice.removeTextChangedListener(this)
+
+                val parsed = parsePrice(s?.toString() ?: "")
+                val formatted = formatPrice(parsed)
+
+                current = formatted
+                binding.editTextPrice.setText(formatted)
+                binding.editTextPrice.setSelection(formatted.length)
+                binding.editTextPrice.addTextChangedListener(this)
+            }
+        }
+
+        override fun afterTextChanged(s: Editable?) {
+            setTotalPrice()
+        }
+    }
+
+    private fun getTextWatcherQuantity() = object : TextWatcher {
+        override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+        }
+
+        override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+        }
+
+        override fun afterTextChanged(s: Editable?) {
+            setTotalPrice()
+        }
+
+    }
+
+    private fun parsePrice(stringPrice: String): Float {
+        val stringPrice = stringPrice
+        val stringParsed = stringPrice.replace(regexPrice, "")
+        return stringParsed.toFloat() / 100
+    }
+
+    private fun formatPrice(floatPrice: Float): String {
+        val lBrazil = Locale("pt", "BR")
+        return NumberFormat.getCurrencyInstance(lBrazil).format((floatPrice))
+    }
+
+    private fun setTotalPrice() {
+        with(binding) {
+            val price = parsePrice(binding.editTextPrice.text.toString())
+
+            val quantity = editTextQuantity.text.toString().let { q ->
+                if (q.isEmpty()) 1 else q.toInt()
+            }
+
+            val total = price * quantity
+            if (total > 0) {
+                getString(R.string.text_view_total_price).format(total).let { str ->
+                    textViewTotalPrice.text = str
+                }
+            } else {
+                textViewTotalPrice.text = ""
+            }
+        }
+    }
+
     private fun setTextChangedListener() {
-        arrayOf(
-            binding.editTextQuantity,
-            binding.editTextPrice
-        ).forEach {
-            it.addTextChangedListener(object : TextWatcher {
-                override fun beforeTextChanged(
-                    s: CharSequence?,
-                    start: Int,
-                    count: Int,
-                    after: Int
-                ) {
-                }
-
-                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
-
-                override fun afterTextChanged(s: Editable?) {
-                    with(binding) {
-                        val price = editTextPrice.text.toString().let { p ->
-                            if (p.isEmpty()) 0f else p.toFloat()
-                        }
-                        val quantity = editTextQuantity.text.toString().let { q ->
-                            if (q.isEmpty()) 1 else q.toInt()
-                        }
-
-                        val total = price * quantity
-                        if (total > 0) {
-                            getString(R.string.text_view_total_price).format(total).let { str ->
-                                textViewTotalPrice.text = str
-                            }
-                        }else{
-                            textViewTotalPrice.text = ""
-                        }
-
-                    }
-                }
-            })
+        with(binding) {
+            editTextPrice.addTextChangedListener(getTextWatcherPrice())
+            editTextQuantity.addTextChangedListener(getTextWatcherQuantity())
         }
     }
 
@@ -103,7 +145,7 @@ class FormItemFragment : Fragment(), View.OnClickListener, View.OnKeyListener {
                 if (it != null) {
                     lastItem = it
                     editTextTitle.setText(it.title)
-                    editTextPrice.setText(it.price.toString().let { if (it == "0.0") "" else it })
+                    editTextPrice.setText(formatPrice(it.price))
                     editTextQuantity.setText(
                         it.quantity.toString().let { if (it == "1") "" else it })
                     buttonSave.text = getString(R.string.update)
@@ -114,40 +156,40 @@ class FormItemFragment : Fragment(), View.OnClickListener, View.OnKeyListener {
 
     override fun onClick(v: View) {
         when (v.id) {
-            R.id.button_save -> {
-                try {
-                    val title = binding.editTextTitle.text.toString().let {
-                        if (it == "") throw Exception("Preencha o nome do item!") else it
-                    }
-                    val quantity = binding.editTextQuantity.text.toString().let {
-                        if (it == "") 1 else it.toInt()
-                    }
-                    val price = binding.editTextPrice.text.toString().let {
-                        if (it == "") 0f else it.toFloat()
-                    }
+            R.id.button_save -> performSaveAction()
 
-                    ItemModel().apply {
-                        this.id = lastItem?.id ?: 0
-                        this.title = title
-                        this.quantity = quantity
-                        this.price = price
-                    }.also { viewModel.save(it) }
-
-                    manageKeyboard(v, show = false)
-                    buildSucessAlert(v)
-                    binding.textLayoutTitle.isErrorEnabled = false
-                } catch (e: Exception) {
-                    with(binding.textLayoutTitle) {
-                        error = e.message
-                        isErrorEnabled = true
-                    }
-                }
-            }
             R.id.button_cancel -> findNavController().navigate(R.id.action_FormItemFragment_to_ListFragment)
         }
     }
 
-    private fun buildSucessAlert(v: View) {
+    private fun performSaveAction() {
+        try {
+            val title = binding.editTextTitle.text.toString().let {
+                if (it == "") throw Exception("Preencha o nome do item!") else it
+            }
+            val quantity = binding.editTextQuantity.text.toString().let {
+                if (it == "") 1 else it.toInt()
+            }
+            val price = parsePrice(binding.editTextPrice.text.toString())
+
+            ItemModel().apply {
+                this.id = lastItem?.id ?: 0
+                this.title = title
+                this.quantity = quantity
+                this.price = price
+            }.also { viewModel.save(it) }
+
+            buildSucessAlert()
+            binding.textLayoutTitle.isErrorEnabled = false
+        } catch (e: Exception) {
+            with(binding.textLayoutTitle) {
+                error = e.message
+                isErrorEnabled = true
+            }
+        }
+    }
+
+    private fun buildSucessAlert() {
         AlertDialog.Builder(context)
             .setTitle(getString(R.string.alert_title_item_saved))
             .setMessage(getString(R.string.alert_msg_item_saved))
@@ -172,11 +214,6 @@ class FormItemFragment : Fragment(), View.OnClickListener, View.OnKeyListener {
         viewModel.updateLastItem(null)
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
-    }
-
     override fun onKey(v: View, keyCode: Int, event: KeyEvent): Boolean = when (keyCode) {
         KeyEvent.KEYCODE_ENTER -> {
             manageKeyboard(v, show = false)
@@ -192,5 +229,10 @@ class FormItemFragment : Fragment(), View.OnClickListener, View.OnKeyListener {
             inputMethodManager.showSoftInput(v, InputMethodManager.SHOW_IMPLICIT)
         else
             inputMethodManager.hideSoftInputFromWindow(v.windowToken, 0)
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }

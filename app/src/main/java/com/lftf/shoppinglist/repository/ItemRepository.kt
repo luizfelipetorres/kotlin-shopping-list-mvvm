@@ -12,6 +12,8 @@ class ItemRepository(context: Context) {
 
     fun getItens(): List<ItemModel> = itemDatabase.getItens()
 
+    fun getItem(id: Int): ItemModel = itemDatabase.getItem(id)
+
     fun delete(id: Int): Boolean = itemDatabase.delete(itemDatabase.getItem(id)) == 1
 
     fun update(item: ItemModel): Boolean = itemDatabase.update(item) == 1

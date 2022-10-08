@@ -38,16 +38,8 @@ class ItemAdapter(val context: Context) : RecyclerView.Adapter<ItemAdapter.ItemV
                     Color.WHITE
             )
 
-            with(binding.root) {
-                setOnLongClickListener {
-                    listener.onLongClick(model.id) {
-                        notifyItemRemoved(adapterPosition)
-                        notifyItemRangeChanged(adapterPosition, itemCount)
-                    }
-                }
-                setOnClickListener {
-                    listener.onClick(model)
-                }
+            binding.root.setOnClickListener {
+                listener.onClick(model)
             }
         }
     }
@@ -65,8 +57,14 @@ class ItemAdapter(val context: Context) : RecyclerView.Adapter<ItemAdapter.ItemV
 
     fun updateList(list: List<ItemModel>) {
         itensList = list
+    }
+
+    fun sortList(list: List<ItemModel>) {
+        updateList(list)
         notifyDataSetChanged()
     }
+
+    fun getItensListSize() = itensList.size
 
     fun attachListener(listener: ItemListener) {
         this.listener = listener

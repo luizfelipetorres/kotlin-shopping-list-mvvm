@@ -36,6 +36,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
+        app:endIconMode="clear_text"
         app:layout_constraintBottom_toTopOf="@id/text_layout_quantity"
         app:layout_constraintEnd_toEndOf="@id/text_layout_title"
         app:layout_constraintStart_toStartOf="@id/text_layout_title"
@@ -46,7 +47,8 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:hint="@string/hint_price"
-            android:inputType="numberDecimal">
+            android:inputType="numberDecimal"
+            >
 
         </com.google.android.material.textfield.TextInputEditText>
     </com.google.android.material.textfield.TextInputLayout>
@@ -57,6 +59,8 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
+
+
         app:layout_constraintEnd_toEndOf="@id/text_layout_title"
         app:layout_constraintStart_toStartOf="@id/text_layout_title"
         app:layout_constraintTop_toBottomOf="@id/text_layout_price">
@@ -75,14 +79,14 @@
         android:id="@+id/text_view_total_price"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/text_layout_quantity"
-        tools:text="@string/text_view_total_price"
-        app:layout_constraintStart_toStartOf="@id/text_layout_quantity"
-        app:layout_constraintEnd_toEndOf="@id/text_layout_quantity"
-        android:gravity="center"
         android:layout_marginVertical="8dp"
+        android:gravity="center"
         android:textAppearance="@style/TextAppearance.MaterialComponents.Headline4"
-        />
+        app:layout_constraintEnd_toEndOf="@id/text_layout_quantity"
+        app:layout_constraintStart_toStartOf="@id/text_layout_quantity"
+        app:layout_constraintTop_toBottomOf="@id/text_layout_quantity"
+        tools:text="@string/text_view_total_price" />
+
     <com.google.android.material.button.MaterialButton
         android:id="@+id/button_cancel"
         android:layout_width="@dimen/button_width"

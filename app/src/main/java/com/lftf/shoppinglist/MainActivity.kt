@@ -1,10 +1,16 @@
 package com.lftf.shoppinglist
 
+import android.content.pm.PackageManager
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContract
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
@@ -17,8 +23,10 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var binding: ActivityMainBinding
+    private lateinit var permissionLauncher: ActivityResultLauncher<String>
     private val listViewModel: MainViewModel by viewModels()
     private lateinit var navController: NavController
+    private var isPermissionGranted = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -31,9 +39,30 @@ class MainActivity : AppCompatActivity() {
 
         setSupportActionBar(binding.toolbar)
 
+        permissionLauncher = registerForActivityResult(ActivityResultContracts.RequestPermission()) {
+            isPermissionGranted = it ?: isPermissionGranted
+        }
+
+        checkPermissions()
+
         navController = findNavController(R.id.nav_host_fragment_content_main)
         appBarConfiguration = AppBarConfiguration(navController.graph)
         setupActionBarWithNavController(navController, appBarConfiguration)
+    }
+
+    private fun checkPermissions() {
+        isPermissionGranted =
+            ContextCompat.checkSelfPermission(
+                this,
+                android.Manifest.permission.READ_CONTACTS
+            ) == PackageManager.PERMISSION_GRANTED
+
+
+        if (!isPermissionGranted){
+            permissionLauncher.launch(android.Manifest.permission.READ_CONTACTS)
+        }
+
+        Log.d("MainActivity", isPermissionGranted.toString())
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {

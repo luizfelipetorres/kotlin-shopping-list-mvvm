@@ -33,8 +33,8 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         _lastItem.value = item
     }
 
-    private fun sort() {
-        _list.value = _list.value?.let {
+    private fun sort(list: List<ItemModel>) {
+        _list.value = list.let {
             if (_sortPrice.value != null) {
                 when (_sortPrice.value) {
                     true -> it.sortedBy { item -> item.getTotalValue() }
@@ -66,7 +66,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         if (_sortTitle.value != null) {
             _sortTitle.value = null
         }
-        sort()
+        _list.value?.let { sort(it) }
     }
 
     fun changeSortTitle() {
@@ -78,7 +78,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         if (_sortPrice.value != null) {
             _sortPrice.value = null
         }
-        sort()
+        _list.value?.let { sort(it) }
     }
 
     private fun updateTotalAmount() {
@@ -92,9 +92,8 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
 
     fun getAll() {
         val allItens = repository.getItens()
-        _list.value = allItens
+        sort(allItens)
         updateTotalAmount()
-        sort()
     }
 
     private fun message(msg: String) {
@@ -103,13 +102,17 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun save(item: ItemModel) {
-        if (item.id == 0)
+        val listFiltered = _list.value?.filter { it.id == item.id }
+        val isEmptyList: Boolean = listFiltered?.isEmpty() ?: true
+        if (item.id == 0) {
             repository.save(item)
-        else {
+        } else if (isEmptyList) {
+            repository.save(item)
+        } else {
             repository.update(item)
-        }.also {
-            getAll()
         }
+        getAll()
+
     }
 
     fun delete(id: Int) {
@@ -121,5 +124,10 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         }.also {
             getAll()
         }
+    }
+
+    fun deleteAtPosition(position: Int) {
+        val id = _list.value!![position].id
+        delete(id)
     }
 }
