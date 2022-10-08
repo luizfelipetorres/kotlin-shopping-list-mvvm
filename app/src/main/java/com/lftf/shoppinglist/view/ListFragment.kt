@@ -153,8 +153,6 @@ class ListFragment : Fragment(), View.OnClickListener {
 
         override fun getSwipeThreshold(viewHolder: RecyclerView.ViewHolder): Float = 0.7f
 
-
-
         override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
             val position: Int = viewHolder.adapterPosition
 

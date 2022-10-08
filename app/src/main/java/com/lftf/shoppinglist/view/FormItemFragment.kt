@@ -5,6 +5,7 @@ import android.content.Context.INPUT_METHOD_SERVICE
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Half.toFloat
 import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
@@ -30,7 +31,7 @@ class FormItemFragment : Fragment(), View.OnClickListener, View.OnKeyListener {
     private val viewModel: MainViewModel by activityViewModels()
     private val binding get() = _binding!!
     private var lastItem: ItemModel? = null
-    private val regexPrice: Regex = """[R,$.]""".toRegex()
+    private val regexPrice: Regex = """[\sR,$.]""".toRegex()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -98,7 +99,7 @@ class FormItemFragment : Fragment(), View.OnClickListener, View.OnKeyListener {
     private fun parsePrice(stringPrice: String): Float {
         val stringPrice = stringPrice
         val stringParsed = stringPrice.replace(regexPrice, "")
-        return stringParsed.toFloat() / 100
+        return stringParsed.let{ if (it == "") 0f else it.toFloat() / 100 }
     }
 
     private fun formatPrice(floatPrice: Float): String {
@@ -156,13 +157,13 @@ class FormItemFragment : Fragment(), View.OnClickListener, View.OnKeyListener {
 
     override fun onClick(v: View) {
         when (v.id) {
-            R.id.button_save -> performSaveAction()
+            R.id.button_save -> performSaveAction(v)
 
             R.id.button_cancel -> findNavController().navigate(R.id.action_FormItemFragment_to_ListFragment)
         }
     }
 
-    private fun performSaveAction() {
+    private fun performSaveAction(v: View) {
         try {
             val title = binding.editTextTitle.text.toString().let {
                 if (it == "") throw Exception("Preencha o nome do item!") else it
@@ -179,7 +180,7 @@ class FormItemFragment : Fragment(), View.OnClickListener, View.OnKeyListener {
                 this.price = price
             }.also { viewModel.save(it) }
 
-            buildSucessAlert()
+            buildSucessAlert(v)
             binding.textLayoutTitle.isErrorEnabled = false
         } catch (e: Exception) {
             with(binding.textLayoutTitle) {
@@ -189,7 +190,7 @@ class FormItemFragment : Fragment(), View.OnClickListener, View.OnKeyListener {
         }
     }
 
-    private fun buildSucessAlert() {
+    private fun buildSucessAlert(v: View) {
         AlertDialog.Builder(context)
             .setTitle(getString(R.string.alert_title_item_saved))
             .setMessage(getString(R.string.alert_msg_item_saved))
@@ -200,7 +201,7 @@ class FormItemFragment : Fragment(), View.OnClickListener, View.OnKeyListener {
             }
             .setNegativeButton(getString(R.string.alert_negative_button_item_saved)) { _, _ ->
                 findNavController().navigate(R.id.action_FormItemFragment_to_ListFragment)
-
+                manageKeyboard(v, false)
             }
             .show()
     }

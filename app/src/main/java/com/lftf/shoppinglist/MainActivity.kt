@@ -34,8 +34,8 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        if (savedInstanceState == null)
-            listViewModel.getAll()
+
+
 
         setSupportActionBar(binding.toolbar)
 
@@ -48,6 +48,11 @@ class MainActivity : AppCompatActivity() {
         navController = findNavController(R.id.nav_host_fragment_content_main)
         appBarConfiguration = AppBarConfiguration(navController.graph)
         setupActionBarWithNavController(navController, appBarConfiguration)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        listViewModel.getAll()
     }
 
     private fun checkPermissions() {
