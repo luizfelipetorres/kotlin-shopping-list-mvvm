@@ -14,6 +14,7 @@ import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
+import androidx.navigation.ui.onNavDestinationSelected
 import androidx.navigation.ui.setupActionBarWithNavController
 import com.lftf.shoppinglist.databinding.ActivityMainBinding
 import com.lftf.shoppinglist.viewmodel.MainViewModel
@@ -70,14 +71,11 @@ class MainActivity : AppCompatActivity() {
         // Inflate the menu; this adds items to the action bar if it is present.
         menuInflater.inflate(R.menu.menu_main, menu)
 
-        menu.findItem(R.id.total_price).setOnMenuItemClickListener { item ->
-            navController.navigate(R.id.action_ListFragment_to_MoneyFragment)
-            false
-        }
+
 
         listViewModel.totalAmount.observe(this) {
             val strTotal = getString(R.string.price).format(it)
-            menu.findItem(R.id.total_price).title = strTotal
+            menu.findItem(R.id.MoneyFragment).title = strTotal
         }
         return false
     }
@@ -86,7 +84,12 @@ class MainActivity : AppCompatActivity() {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
-        return super.onOptionsItemSelected(item)
+        when(item.itemId){
+            R.id.MoneyFragment -> item.onNavDestinationSelected(navController)
+            else -> onSupportNavigateUp()
+        }
+
+        return true
 
     }
 

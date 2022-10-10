@@ -5,7 +5,6 @@ import android.content.Context.INPUT_METHOD_SERVICE
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Half.toFloat
 import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
@@ -18,6 +17,10 @@ import androidx.navigation.fragment.findNavController
 import com.lftf.shoppinglist.R
 import com.lftf.shoppinglist.databinding.FragmentFormItemBinding
 import com.lftf.shoppinglist.model.ItemModel
+import com.lftf.shoppinglist.utils.Price
+import com.lftf.shoppinglist.utils.Price.Companion.formatPrice
+import com.lftf.shoppinglist.utils.Price.Companion.parsePrice
+import com.lftf.shoppinglist.view.watcher.PriceWatcher
 import com.lftf.shoppinglist.viewmodel.MainViewModel
 import java.text.NumberFormat
 import java.util.*
@@ -53,35 +56,11 @@ class FormItemFragment : Fragment(), View.OnClickListener, View.OnKeyListener {
         setObservers()
     }
 
-    private fun getTextWatcherPrice() = object : TextWatcher {
-        private var current = ""
-        override fun beforeTextChanged(
-            s: CharSequence?,
-            start: Int,
-            count: Int,
-            after: Int
-        ) {
-        }
+    private fun <T> teste(teste: T){
 
-        override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-
-            if (s.toString() != current) {
-                binding.editTextPrice.removeTextChangedListener(this)
-
-                val parsed = parsePrice(s?.toString() ?: "")
-                val formatted = formatPrice(parsed)
-
-                current = formatted
-                binding.editTextPrice.setText(formatted)
-                binding.editTextPrice.setSelection(formatted.length)
-                binding.editTextPrice.addTextChangedListener(this)
-            }
-        }
-
-        override fun afterTextChanged(s: Editable?) {
-            setTotalPrice()
-        }
     }
+
+
 
     private fun getTextWatcherQuantity() = object : TextWatcher {
         override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
@@ -94,17 +73,6 @@ class FormItemFragment : Fragment(), View.OnClickListener, View.OnKeyListener {
             setTotalPrice()
         }
 
-    }
-
-    private fun parsePrice(stringPrice: String): Float {
-        val stringPrice = stringPrice
-        val stringParsed = stringPrice.replace(regexPrice, "")
-        return stringParsed.let{ if (it == "") 0f else it.toFloat() / 100 }
-    }
-
-    private fun formatPrice(floatPrice: Float): String {
-        val lBrazil = Locale("pt", "BR")
-        return NumberFormat.getCurrencyInstance(lBrazil).format((floatPrice))
     }
 
     private fun setTotalPrice() {
@@ -133,6 +101,12 @@ class FormItemFragment : Fragment(), View.OnClickListener, View.OnKeyListener {
         }
     }
 
+    private fun getTextWatcherPrice() = object : PriceWatcher(binding.editTextPrice) {
+        override fun afterTextChanged(s: Editable?) {
+            setTotalPrice()
+        }
+    }
+
     private fun setClickListeners() {
         arrayOf(
             binding.buttonSave,
@@ -153,6 +127,8 @@ class FormItemFragment : Fragment(), View.OnClickListener, View.OnKeyListener {
                 }
             }
         }
+
+
     }
 
     override fun onClick(v: View) {
@@ -178,9 +154,15 @@ class FormItemFragment : Fragment(), View.OnClickListener, View.OnKeyListener {
                 this.title = title
                 this.quantity = quantity
                 this.price = price
-            }.also { viewModel.save(it) }
+            }.also {
+                if (viewModel.save(it) == MainViewModel.SaveOptions.SAVED)
+                    buildSuccessAlert(v)
+                else{
+                    manageKeyboard(v, false)
+                    findNavController().navigateUp()
+                }
+            }
 
-            buildSucessAlert(v)
             binding.textLayoutTitle.isErrorEnabled = false
         } catch (e: Exception) {
             with(binding.textLayoutTitle) {
@@ -190,7 +172,7 @@ class FormItemFragment : Fragment(), View.OnClickListener, View.OnKeyListener {
         }
     }
 
-    private fun buildSucessAlert(v: View) {
+    private fun buildSuccessAlert(v: View) {
         AlertDialog.Builder(context)
             .setTitle(getString(R.string.alert_title_item_saved))
             .setMessage(getString(R.string.alert_msg_item_saved))
@@ -200,7 +182,7 @@ class FormItemFragment : Fragment(), View.OnClickListener, View.OnKeyListener {
                 binding.editTextTitle.requestFocus()
             }
             .setNegativeButton(getString(R.string.alert_negative_button_item_saved)) { _, _ ->
-                findNavController().navigate(R.id.action_FormItemFragment_to_ListFragment)
+                findNavController().navigateUp()
                 manageKeyboard(v, false)
             }
             .show()

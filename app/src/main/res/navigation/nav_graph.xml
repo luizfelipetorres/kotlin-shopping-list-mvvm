@@ -8,7 +8,7 @@
         android:id="@+id/MoneyFragment"
         android:name="com.lftf.shoppinglist.view.MoneyFragment"
         android:label="@string/money_fragment_label"
-        tools:layout="@layout/fragment_form_item">
+        tools:layout="@layout/fragment_money">
 
 
         <action

@@ -1,6 +1,7 @@
 package com.lftf.shoppinglist.viewmodel
 
 import android.app.Application
+import android.view.View
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -8,6 +9,11 @@ import com.lftf.shoppinglist.model.ItemModel
 import com.lftf.shoppinglist.repository.ItemRepository
 
 class MainViewModel(application: Application) : AndroidViewModel(application) {
+
+    object SaveOptions{
+        const val SAVED = 1
+        const val UPDATED = 0
+    }
 
     private val repository = ItemRepository(application.applicationContext)
 
@@ -101,17 +107,23 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         _message.value = null
     }
 
-    fun save(item: ItemModel) {
+    fun save(item: ItemModel): Int {
         val listFiltered = _list.value?.filter { it.id == item.id }
         val isEmptyList: Boolean = listFiltered?.isEmpty() ?: true
+        var returnValue: Int
         if (item.id == 0) {
             repository.save(item)
+            returnValue = SaveOptions.SAVED
         } else if (isEmptyList) {
             repository.save(item)
+            returnValue = SaveOptions.SAVED
         } else {
             repository.update(item)
+            returnValue = SaveOptions.UPDATED
         }
         getAll()
+
+        return returnValue
 
     }
 

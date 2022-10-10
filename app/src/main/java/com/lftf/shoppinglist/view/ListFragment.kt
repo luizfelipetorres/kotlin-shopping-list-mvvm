@@ -1,7 +1,6 @@
 package com.lftf.shoppinglist.view
 
 import android.annotation.SuppressLint
-import android.app.AlertDialog
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint

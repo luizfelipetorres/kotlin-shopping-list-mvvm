@@ -1,36 +1,51 @@
 package com.lftf.shoppinglist.view
 
 import android.os.Bundle
-import android.view.*
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
-import com.lftf.shoppinglist.R
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.lftf.shoppinglist.databinding.FragmentMoneyBinding
+import com.lftf.shoppinglist.model.MoneyModel
+import com.lftf.shoppinglist.view.adapter.MoneyAdapter
 
 class MoneyFragment : Fragment() {
     private lateinit var navController: NavController
+    private lateinit var binding: FragmentMoneyBinding
+    private lateinit var adapter: MoneyAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setHasOptionsMenu(true)
     }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        binding = FragmentMoneyBinding.inflate(LayoutInflater.from(requireContext()))
+        adapter = MoneyAdapter(requireContext().applicationContext)
+        setRecyclerView()
 
-        return inflater.inflate(R.layout.fragment_money, container, false)
+        return binding.root
     }
 
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        inflater.inflate(R.menu.menu_main, menu)
-        menu.findItem(R.id.total_price)
-            .setOnMenuItemClickListener { item ->
-                navController.navigate(R.id.action_MoneyFragment_to_ListFragment)
-                true
-            }
+    private fun setRecyclerView() {
+        val list = listOf<MoneyModel>(MoneyModel(), MoneyModel(0, "Alelo", 100f))
+        adapter.updateList(list)
+        binding.recyclerViewMoney.adapter = adapter
+        binding.recyclerViewMoney.layoutManager = LinearLayoutManager(
+            requireContext().applicationContext,
+            LinearLayoutManager.VERTICAL,
+            false
+        )
 
-
-        super.onCreateOptionsMenu(menu, inflater)
     }
+
+    private fun setTextChangeListeners() {
+
+    }
+
+
 }
