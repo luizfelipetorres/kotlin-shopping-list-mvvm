@@ -56,12 +56,6 @@ class FormItemFragment : Fragment(), View.OnClickListener, View.OnKeyListener {
         setObservers()
     }
 
-    private fun <T> teste(teste: T){
-
-    }
-
-
-
     private fun getTextWatcherQuantity() = object : TextWatcher {
         override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
         }
@@ -127,15 +121,13 @@ class FormItemFragment : Fragment(), View.OnClickListener, View.OnKeyListener {
                 }
             }
         }
-
-
     }
 
     override fun onClick(v: View) {
         when (v.id) {
             R.id.button_save -> performSaveAction(v)
 
-            R.id.button_cancel -> findNavController().navigate(R.id.action_FormItemFragment_to_ListFragment)
+            R.id.button_cancel -> findNavController().navigateUp()
         }
     }
 
