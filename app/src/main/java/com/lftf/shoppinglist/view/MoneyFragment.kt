@@ -6,29 +6,34 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.lftf.shoppinglist.databinding.FragmentMoneyBinding
 import com.lftf.shoppinglist.model.MoneyModel
 import com.lftf.shoppinglist.view.adapter.MoneyAdapter
 
-class MoneyFragment : Fragment() {
+class MoneyFragment : Fragment(), View.OnClickListener {
     private lateinit var navController: NavController
     private lateinit var binding: FragmentMoneyBinding
     private lateinit var adapter: MoneyAdapter
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding = FragmentMoneyBinding.inflate(LayoutInflater.from(requireContext()))
         adapter = MoneyAdapter(requireContext().applicationContext)
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         setRecyclerView()
 
-        return binding.root
+        setClickListeners()
+    }
+
+    private fun setClickListeners() {
+        binding.buttonCancel.setOnClickListener(this);
     }
 
     private fun setRecyclerView() {
@@ -40,12 +45,11 @@ class MoneyFragment : Fragment() {
             LinearLayoutManager.VERTICAL,
             false
         )
-
     }
 
-    private fun setTextChangeListeners() {
-
+    override fun onClick(v: View) {
+        when(v.id){
+            binding.buttonCancel.id -> findNavController().navigateUp()
+        }
     }
-
-
 }

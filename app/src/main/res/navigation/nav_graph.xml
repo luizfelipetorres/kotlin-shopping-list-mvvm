@@ -8,15 +8,7 @@
         android:id="@+id/MoneyFragment"
         android:name="com.lftf.shoppinglist.view.MoneyFragment"
         android:label="@string/money_fragment_label"
-        tools:layout="@layout/fragment_money">
-
-
-        <action
-            android:id="@+id/action_MoneyFragment_to_ListFragment"
-            app:destination="@id/ListFragment"
-            app:popUpTo="@id/ListFragment"
-            app:popUpToInclusive="true"/>
-    </fragment>
+        tools:layout="@layout/fragment_money"/>
 
     <fragment
         android:id="@+id/FormItemFragment"
@@ -24,11 +16,6 @@
         android:label="@string/form_item_fragment_label"
         tools:layout="@layout/fragment_form_item">
 
-        <action
-            android:id="@+id/action_FormItemFragment_to_ListFragment"
-            app:destination="@id/ListFragment"
-            app:popUpTo="@id/ListFragment"
-            app:popUpToInclusive="true" />
         <action
             android:id="@+id/action_ListFragment_to_MoneyFragment"
             app:destination="@id/MoneyFragment" />
