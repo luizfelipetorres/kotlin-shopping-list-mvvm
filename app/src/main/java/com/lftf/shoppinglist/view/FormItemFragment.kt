@@ -17,24 +17,17 @@ import androidx.navigation.fragment.findNavController
 import com.lftf.shoppinglist.R
 import com.lftf.shoppinglist.databinding.FragmentFormItemBinding
 import com.lftf.shoppinglist.model.ItemModel
-import com.lftf.shoppinglist.utils.Price
 import com.lftf.shoppinglist.utils.Price.Companion.formatPrice
 import com.lftf.shoppinglist.utils.Price.Companion.parsePrice
 import com.lftf.shoppinglist.view.watcher.PriceWatcher
 import com.lftf.shoppinglist.viewmodel.MainViewModel
-import java.text.NumberFormat
-import java.util.*
 
-/**
- * A simple [Fragment] subclass as the second destination in the navigation.
- */
 class FormItemFragment : Fragment(), View.OnClickListener, View.OnKeyListener {
 
     private var _binding: FragmentFormItemBinding? = null
     private val viewModel: MainViewModel by activityViewModels()
     private val binding get() = _binding!!
     private var lastItem: ItemModel? = null
-    private val regexPrice: Regex = """[\sR,$.]""".toRegex()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
