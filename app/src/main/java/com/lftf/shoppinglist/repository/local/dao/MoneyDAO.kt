@@ -3,7 +3,6 @@ package com.lftf.shoppinglist.repository.local.dao
 import androidx.room.*
 import com.lftf.shoppinglist.model.MoneyModel
 import com.lftf.shoppinglist.repository.interfaces.IDAO
-import com.lftf.shoppinglist.repository.interfaces.IRepository
 
 @Dao
 interface MoneyDAO : IDAO<MoneyModel> {

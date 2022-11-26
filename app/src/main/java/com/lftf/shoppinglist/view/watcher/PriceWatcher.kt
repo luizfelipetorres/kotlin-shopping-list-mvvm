@@ -3,10 +3,9 @@ package com.lftf.shoppinglist.view.watcher
 import android.text.Editable
 import android.text.TextWatcher
 import android.widget.EditText
-import com.google.android.material.textfield.TextInputEditText
 import com.lftf.shoppinglist.utils.Price
 
-open class PriceWatcher (val field: EditText): TextWatcher {
+open class PriceWatcher(val field: EditText) : TextWatcher {
     private var current = ""
     override fun beforeTextChanged(
         s: CharSequence?,

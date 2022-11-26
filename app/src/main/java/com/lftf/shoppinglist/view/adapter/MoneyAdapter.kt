@@ -2,11 +2,11 @@ package com.lftf.shoppinglist.view.adapter
 
 import android.content.Context
 import android.text.Editable
-import android.text.TextWatcher
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.lftf.shoppinglist.R
 import com.lftf.shoppinglist.databinding.RowMoneyBinding
 import com.lftf.shoppinglist.model.MoneyModel
 import com.lftf.shoppinglist.utils.Price
@@ -19,7 +19,7 @@ class MoneyAdapter(val context: Context) : RecyclerView.Adapter<MoneyViewHolder>
     private lateinit var binding: RowMoneyBinding
     private var moneyList: List<MoneyModel> = listOf()
 
-    class MoneyViewHolder(val binding: RowMoneyBinding) : RecyclerView.ViewHolder(binding.root) {
+    class MoneyViewHolder(private val binding: RowMoneyBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(model: MoneyModel, listener: MoneyListener) {
             binding.etLimit.let {
                 it.addTextChangedListener(object : PriceWatcher(it) {
@@ -33,19 +33,11 @@ class MoneyAdapter(val context: Context) : RecyclerView.Adapter<MoneyViewHolder>
                         listener.changeLimit(Price.parsePrice(it.text.toString()))
                     }
                 })
-                it.setText((model.limit * 10).toString())
+                it.setText(it.context.getString(R.string.price).format(model.limit))
             }
             binding.etPaymentMethod.let {
                 it.setText(model.method)
-                it.addTextChangedListener(object : TextWatcher{
-                    override fun beforeTextChanged(
-                        s: CharSequence?,
-                        start: Int,
-                        count: Int,
-                        after: Int
-                    ) {
-                    }
-
+                it.addTextChangedListener(object : PriceWatcher(it) {
                     override fun onTextChanged(
                         s: CharSequence?,
                         start: Int,
@@ -55,7 +47,7 @@ class MoneyAdapter(val context: Context) : RecyclerView.Adapter<MoneyViewHolder>
                     }
 
                     override fun afterTextChanged(s: Editable?) {
-                    listener.changeMethod(it.text.toString())
+                        listener.changeMethod(it.text.toString())
                     }
                 })
             }
@@ -78,7 +70,6 @@ class MoneyAdapter(val context: Context) : RecyclerView.Adapter<MoneyViewHolder>
                 moneyList[holder.adapterPosition].limit = newLimite
             }
         })
-
     }
 
     override fun getItemCount(): Int = moneyList.size
@@ -87,5 +78,4 @@ class MoneyAdapter(val context: Context) : RecyclerView.Adapter<MoneyViewHolder>
         moneyList = list
         notifyDataSetChanged()
     }
-
 }

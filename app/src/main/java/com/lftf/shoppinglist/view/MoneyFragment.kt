@@ -9,6 +9,7 @@ import androidx.navigation.NavController
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.snackbar.Snackbar
 import com.lftf.shoppinglist.databinding.FragmentMoneyBinding
 import com.lftf.shoppinglist.model.MoneyModel
 import com.lftf.shoppinglist.repository.local.MoneyRepository
@@ -48,10 +49,6 @@ class MoneyFragment : Fragment(), View.OnClickListener {
         viewModel.list.observe(viewLifecycleOwner) {
             adapter.updateList(it)
         }
-
-//        viewModel.deletedPosition.observe(viewLifecycleOwner){
-//            adapter.notifyItemRemoved(it)
-//        }
     }
 
     private fun setClickListeners() {
@@ -59,7 +56,7 @@ class MoneyFragment : Fragment(), View.OnClickListener {
     }
 
     private fun setRecyclerView() {
-        val list = listOf<MoneyModel>(
+        val list = listOf(
             MoneyModel().apply {
                 method = "Alelo Felipe"
                 limit = 750f
@@ -82,11 +79,11 @@ class MoneyFragment : Fragment(), View.OnClickListener {
 
                     val stringSnack =
                         "Item deletado!"
-//                    Snackbar.make(binding.recyclerViewMoney, stringSnack, Snackbar.LENGTH_LONG)
-//                        .setAction("Desfazer") {
-//                            deletedItem?.let { item -> viewModel.save(item) }
-//                            adapter.notifyItemInserted(position)
-//                        }.show()
+                    Snackbar.make(binding.recyclerViewMoney, stringSnack, Snackbar.LENGTH_LONG)
+                        .setAction("Desfazer") {
+                            deletedItem?.let { item -> viewModel.save(item) }
+                            adapter.notifyItemInserted(position)
+                        }.show()
                 }
             }
         }).also {

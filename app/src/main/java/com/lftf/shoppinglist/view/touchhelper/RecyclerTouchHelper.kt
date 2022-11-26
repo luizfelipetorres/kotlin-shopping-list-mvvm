@@ -72,7 +72,7 @@ abstract class RecyclerTouchHelper(val context: Context) : ItemTouchHelper.Callb
         super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive)
     }
 
-    fun clearCanvas(c: Canvas, left: Float, top: Float, right: Float, bottom: Float) {
+    private fun clearCanvas(c: Canvas, left: Float, top: Float, right: Float, bottom: Float) {
         val paint = Paint().apply { color = Color.WHITE }
         c.drawRect(left, top, right, bottom, paint)
     }

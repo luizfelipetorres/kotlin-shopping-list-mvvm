@@ -22,7 +22,7 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var binding: ActivityMainBinding
-    private val listViewModel: MainViewModel by viewModels() {
+    private val listViewModel: MainViewModel by viewModels {
         MainViewModel.Companion.Factory(ItemRepository(this))
     }
 
@@ -70,14 +70,6 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onSupportNavigateUp(): Boolean {
-        Log.d(
-            TAG,
-            "${navController.currentDestination?.id.toString()} == ${navController.findDestination(R.id.MoneyFragment)?.id}"
-        )
-//
-//        if (navController.currentDestination?.id == navController.findDestination(R.id.MoneyFragment)?.id) {
-//
-//        }
         return navController.navigateUp(appBarConfiguration)
                 || super.onSupportNavigateUp()
     }

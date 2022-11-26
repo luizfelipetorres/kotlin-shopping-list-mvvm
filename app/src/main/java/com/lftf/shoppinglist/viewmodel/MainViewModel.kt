@@ -1,11 +1,11 @@
 package com.lftf.shoppinglist.viewmodel
 
-import android.app.Application
-import androidx.lifecycle.*
-import com.lftf.shoppinglist.data.DatabaseHelper
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import com.lftf.shoppinglist.model.ItemModel
 import com.lftf.shoppinglist.repository.local.ItemRepository
-import com.lftf.shoppinglist.repository.local.MoneyRepository
 
 class MainViewModel(private val repository: ItemRepository) : ViewModel() {
 
@@ -15,7 +15,8 @@ class MainViewModel(private val repository: ItemRepository) : ViewModel() {
     }
 
     companion object {
-        class Factory(private val repository: ItemRepository): ViewModelProvider.Factory{
+        class Factory(private val repository: ItemRepository) : ViewModelProvider.Factory {
+            @Suppress("UNCHECKED_CAST")
             override fun <T : ViewModel> create(modelClass: Class<T>): T {
                 return MainViewModel(repository = repository) as T
             }
@@ -51,8 +52,7 @@ class MainViewModel(private val repository: ItemRepository) : ViewModel() {
                     true -> it.sortedBy { item -> item.getTotalValue() }
                     else -> it.sortedByDescending { item -> item.getTotalValue() }
                 }
-            }
-            if (_sortTitle.value != null) {
+            } else if (_sortTitle.value != null) {
                 when (_sortTitle.value) {
                     true -> it.sortedBy { item -> item.title }
                     else -> it.sortedByDescending { item -> item.title }
@@ -116,16 +116,15 @@ class MainViewModel(private val repository: ItemRepository) : ViewModel() {
     fun save(item: ItemModel): Int {
         val listFiltered = _list.value?.filter { it.id == item.id }
         val isEmptyList: Boolean = listFiltered?.isEmpty() ?: true
-        var returnValue: Int
-        if (item.id == 0) {
+        val returnValue: Int = if (item.id == 0) {
             repository.save(item)
-            returnValue = SaveOptions.SAVED
+            SaveOptions.SAVED
         } else if (isEmptyList) {
             repository.save(item)
-            returnValue = SaveOptions.SAVED
+            SaveOptions.SAVED
         } else {
             repository.update(item)
-            returnValue = SaveOptions.UPDATED
+            SaveOptions.UPDATED
         }
         getAll()
 

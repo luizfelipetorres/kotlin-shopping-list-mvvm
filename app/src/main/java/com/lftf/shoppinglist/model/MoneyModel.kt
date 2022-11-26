@@ -5,7 +5,7 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 
 @Entity(tableName = "tb_money")
-class MoneyModel() : AbstractModel() {
+class MoneyModel : AbstractModel() {
 
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo

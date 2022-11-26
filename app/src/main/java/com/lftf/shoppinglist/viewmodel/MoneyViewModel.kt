@@ -35,25 +35,31 @@ class MoneyViewModel(private val repository: MoneyRepository) : ViewModel() {
         getAll()
     }
 
-    fun saveAll() {
-//        TODO("Salvar as informações em _list antes de salvar no BD")
-
+    fun saveAll(lastEmpty: Boolean = false) {
         _list.value?.let { lista ->
             repository.clear().also {
-                repository.saveAll(lista)
+                val newList = mutableListOf<MoneyModel>()
+                lista.forEach { e -> newList.add(e) }
+                    .also { if (lastEmpty) newList.add(MoneyModel()) }
+                repository.saveAll(newList)
             }
         }
     }
 
     fun getAll() {
-        val lista = repository.listAll().ifEmpty { mutableListOf(MoneyModel()) }
-        _list.value = lista
-
+        repository.listAll().let { _list.value = it }
     }
 
     fun addToList() {
-        repository.save(MoneyModel())
+        saveAll(lastEmpty = true)
         getAll()
     }
 
+    fun save(item: MoneyModel) {
+        val newList = mutableListOf<MoneyModel>()
+        _list.value?.let { newList.addAll(it) }
+        newList.add(item)
+        _list.value = newList
+        saveAll()
+    }
 }

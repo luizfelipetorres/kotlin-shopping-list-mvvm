@@ -24,12 +24,13 @@
     <string name="text_view_total_price">Total: R$ %.2f</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="hint_payment_method">Insira a forma de pagamento</string>
-    <string name="hint_payment_limit">Insira o valo máximo</string>
+    <string name="hint_payment_method">Forma de pagamento</string>
+    <string name="hint_payment_limit">Limite</string>
     <string name="button_register">cadastrar</string>
     <string name="button_cancel">cancelar</string>
     <string name="money_fragment_label">Gerenciar recursos</string>
 
     <string name="button_new">novo</string>
+    <string name="fab_content_description">Adicionar nova forma de pagamento</string>
 
 </resources>

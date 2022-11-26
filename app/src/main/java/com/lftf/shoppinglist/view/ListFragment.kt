@@ -23,7 +23,7 @@ import com.lftf.shoppinglist.viewmodel.MainViewModel
 class ListFragment : Fragment(), View.OnClickListener {
 
     private var _binding: FragmentListBinding? = null
-    private val viewModel: MainViewModel by activityViewModels() {
+    private val viewModel: MainViewModel by activityViewModels {
         MainViewModel.Companion.Factory(ItemRepository(requireContext()))
     }
     private lateinit var adapter: ItemAdapter

@@ -12,23 +12,44 @@
         android:orientation="horizontal"
         android:weightSum="2">
 
-        <EditText
-            android:id="@+id/et_payment_method"
+        <com.google.android.material.textfield.TextInputLayout
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_width="0dp"
+            android:layout_margin="4dp"
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
-            android:layout_toLeftOf="@+id/et_limit"
-            android:hint="Forma de pagamento"
-            tools:ignore="RtlHardcoded" />
+            android:layout_toLeftOf="@+id/til_limit"
+            tools:ignore="RtlHardcoded">
 
-        <EditText
-            android:id="@+id/et_limit"
-            android:inputType="number"
+            <EditText
+                android:id="@+id/et_payment_method"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/hint_payment_method"
+                tools:ignore="RtlHardcoded"
+                android:inputType="textCapSentences"
+                android:importantForAutofill="no" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/til_limit"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
-            android:hint="@string/price"
-            tools:ignore="RtlHardcoded" />
+            android:layout_margin="4dp"
+            tools:ignore="RtlHardcoded">
+
+            <EditText
+                android:id="@+id/et_limit"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:hint="@string/hint_payment_limit"
+                android:inputType="number"
+                android:minWidth="100dp"
+                tools:ignore="RtlHardcoded"
+                android:importantForAutofill="no" />
+        </com.google.android.material.textfield.TextInputLayout>
     </RelativeLayout>
 
 </com.google.android.material.card.MaterialCardView>
