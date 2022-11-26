@@ -1,21 +1,26 @@
 package com.lftf.shoppinglist.viewmodel
 
 import android.app.Application
-import android.view.View
-import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.*
+import com.lftf.shoppinglist.data.DatabaseHelper
 import com.lftf.shoppinglist.model.ItemModel
-import com.lftf.shoppinglist.repository.ItemRepository
+import com.lftf.shoppinglist.repository.local.ItemRepository
+import com.lftf.shoppinglist.repository.local.MoneyRepository
 
-class MainViewModel(application: Application) : AndroidViewModel(application) {
+class MainViewModel(private val repository: ItemRepository) : ViewModel() {
 
-    object SaveOptions{
+    object SaveOptions {
         const val SAVED = 1
         const val UPDATED = 0
     }
 
-    private val repository = ItemRepository(application.applicationContext)
+    companion object {
+        class Factory(private val repository: ItemRepository): ViewModelProvider.Factory{
+            override fun <T : ViewModel> create(modelClass: Class<T>): T {
+                return MainViewModel(repository = repository) as T
+            }
+        }
+    }
 
     private val _list = MutableLiveData<List<ItemModel>>()
     val list: LiveData<List<ItemModel>> = _list
@@ -46,7 +51,8 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
                     true -> it.sortedBy { item -> item.getTotalValue() }
                     else -> it.sortedByDescending { item -> item.getTotalValue() }
                 }
-            } else if (_sortTitle.value != null) {
+            }
+            if (_sortTitle.value != null) {
                 when (_sortTitle.value) {
                     true -> it.sortedBy { item -> item.title }
                     else -> it.sortedByDescending { item -> item.title }
@@ -97,7 +103,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun getAll() {
-        val allItens = repository.getItens()
+        val allItens = repository.listAll()
         sort(allItens)
         updateTotalAmount()
     }
@@ -128,12 +134,8 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun delete(id: Int) {
-        repository.delete(id).let {
-            if (it)
-                message("Excluído com sucesso!")
-            else
-                message("Falha ao excluir")
-        }.also {
+        repository.delete(id).also {
+            message("Excluído com sucesso!")
             getAll()
         }
     }

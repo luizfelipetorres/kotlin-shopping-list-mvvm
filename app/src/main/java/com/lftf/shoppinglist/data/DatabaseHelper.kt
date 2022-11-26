@@ -7,12 +7,15 @@ import androidx.room.RoomDatabase
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.lftf.shoppinglist.model.ItemModel
-import com.lftf.shoppinglist.repository.ItemDAO
+import com.lftf.shoppinglist.model.MoneyModel
+import com.lftf.shoppinglist.repository.local.dao.ItemDAO
+import com.lftf.shoppinglist.repository.local.dao.MoneyDAO
 
-@Database(entities = [ItemModel::class], version = 1)
+@Database(entities = [ItemModel::class, MoneyModel::class], version = 2)
 abstract class DatabaseHelper : RoomDatabase() {
 
     abstract fun itemDao() : ItemDAO
+    abstract fun moneyDao(): MoneyDAO
 
     companion object {
         private lateinit var INSTANCE: DatabaseHelper
@@ -22,7 +25,7 @@ abstract class DatabaseHelper : RoomDatabase() {
                 synchronized(DatabaseHelper::class) {
                     INSTANCE =
                         Room.databaseBuilder(context, DatabaseHelper::class.java, "shopping_list")
-                            .addMigrations(MIGRATION_1_2)
+                            .fallbackToDestructiveMigration()
                             .allowMainThreadQueries()
                             .build()
                 }

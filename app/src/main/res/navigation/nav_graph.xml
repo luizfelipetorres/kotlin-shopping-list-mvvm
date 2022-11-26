@@ -19,6 +19,10 @@
         <action
             android:id="@+id/action_ListFragment_to_MoneyFragment"
             app:destination="@id/MoneyFragment" />
+        <argument
+            android:name="isNew"
+            app:argType="boolean"
+            android:defaultValue="true" />
     </fragment>
     <fragment
         android:id="@+id/ListFragment"

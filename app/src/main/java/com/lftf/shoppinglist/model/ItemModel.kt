@@ -5,11 +5,11 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 
 @Entity(tableName = "tb_item")
-class ItemModel{
+class ItemModel : AbstractModel() {
 
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo
-    var id: Int = 0
+    override var id: Int = 0
 
     @ColumnInfo
     var title: String = ""

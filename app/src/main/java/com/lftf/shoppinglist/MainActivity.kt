@@ -1,6 +1,7 @@
 package com.lftf.shoppinglist
 
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import androidx.activity.viewModels
@@ -12,13 +13,19 @@ import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.onNavDestinationSelected
 import androidx.navigation.ui.setupActionBarWithNavController
 import com.lftf.shoppinglist.databinding.ActivityMainBinding
+import com.lftf.shoppinglist.repository.local.ItemRepository
 import com.lftf.shoppinglist.viewmodel.MainViewModel
+
+const val TAG = "D/MainActivity"
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var binding: ActivityMainBinding
-    private val listViewModel: MainViewModel by viewModels()
+    private val listViewModel: MainViewModel by viewModels() {
+        MainViewModel.Companion.Factory(ItemRepository(this))
+    }
+
     private lateinit var navController: NavController
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -54,7 +61,7 @@ class MainActivity : AppCompatActivity() {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
-        when(item.itemId){
+        when (item.itemId) {
             R.id.MoneyFragment -> item.onNavDestinationSelected(navController)
             else -> onSupportNavigateUp()
         }
@@ -63,6 +70,14 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onSupportNavigateUp(): Boolean {
+        Log.d(
+            TAG,
+            "${navController.currentDestination?.id.toString()} == ${navController.findDestination(R.id.MoneyFragment)?.id}"
+        )
+//
+//        if (navController.currentDestination?.id == navController.findDestination(R.id.MoneyFragment)?.id) {
+//
+//        }
         return navController.navigateUp(appBarConfiguration)
                 || super.onSupportNavigateUp()
     }

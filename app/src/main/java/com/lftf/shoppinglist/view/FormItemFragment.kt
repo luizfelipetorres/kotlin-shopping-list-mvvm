@@ -59,7 +59,6 @@ class FormItemFragment : Fragment(), View.OnClickListener, View.OnKeyListener {
         override fun afterTextChanged(s: Editable?) {
             setTotalPrice()
         }
-
     }
 
     private fun setTotalPrice() {

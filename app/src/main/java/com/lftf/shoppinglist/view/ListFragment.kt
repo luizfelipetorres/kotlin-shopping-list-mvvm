@@ -1,9 +1,5 @@
 package com.lftf.shoppinglist.view
 
-import android.annotation.SuppressLint
-import android.graphics.Canvas
-import android.graphics.Color
-import android.graphics.Paint
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -18,14 +14,18 @@ import com.google.android.material.snackbar.Snackbar
 import com.lftf.shoppinglist.R
 import com.lftf.shoppinglist.databinding.FragmentListBinding
 import com.lftf.shoppinglist.model.ItemModel
+import com.lftf.shoppinglist.repository.local.ItemRepository
 import com.lftf.shoppinglist.view.adapter.ItemAdapter
 import com.lftf.shoppinglist.view.listener.ItemListener
+import com.lftf.shoppinglist.view.touchhelper.RecyclerTouchHelper
 import com.lftf.shoppinglist.viewmodel.MainViewModel
 
 class ListFragment : Fragment(), View.OnClickListener {
 
     private var _binding: FragmentListBinding? = null
-    private val viewModel: MainViewModel by activityViewModels()
+    private val viewModel: MainViewModel by activityViewModels() {
+        MainViewModel.Companion.Factory(ItemRepository(requireContext()))
+    }
     private lateinit var adapter: ItemAdapter
     private val binding get() = _binding!!
 
@@ -82,76 +82,7 @@ class ListFragment : Fragment(), View.OnClickListener {
         }
     }
 
-    private fun setItemTouchHelperCallback() = object : ItemTouchHelper.Callback() {
-        override fun getMovementFlags(
-            recyclerView: RecyclerView,
-            viewHolder: RecyclerView.ViewHolder
-        ): Int {
-            return makeMovementFlags(0, ItemTouchHelper.END)
-        }
-
-        override fun onMove(
-            recyclerView: RecyclerView,
-            viewHolder: RecyclerView.ViewHolder,
-            target: RecyclerView.ViewHolder
-        ): Boolean = false
-
-        @SuppressLint("UseCompatLoadingForDrawables")
-        override fun onChildDraw(
-            c: Canvas,
-            recyclerView: RecyclerView,
-            viewHolder: RecyclerView.ViewHolder,
-            dX: Float,
-            dY: Float,
-            actionState: Int,
-            isCurrentlyActive: Boolean
-        ) {
-            val itemView = viewHolder.itemView
-            val itemHeight = itemView.height
-            val itemWidth = itemView.width
-            if (dX == 0f) {
-                clearCanvas(
-                    c,
-                    itemView.left.toFloat(),
-                    itemView.top.toFloat(),
-                    itemView.right.toFloat(),
-                    itemView.bottom.toFloat()
-                )
-                return super.onChildDraw(
-                    c,
-                    recyclerView,
-                    viewHolder,
-                    dX,
-                    dY,
-                    actionState,
-                    isCurrentlyActive
-                )
-            }
-            val isDelete = dX > 0
-
-            val icon = if (isDelete) R.drawable.ic_delete else R.drawable.ic_share
-
-            val pLeft: Int = if (isDelete) itemView.left else (itemWidth - itemHeight)
-            val pTop: Int = itemView.top
-            val pRight: Int = if (isDelete) (itemView.left + itemHeight) else itemWidth
-            val pBottom: Int = (itemView.top + itemHeight)
-
-            requireContext().getDrawable(icon)?.apply {
-                setBounds(pLeft, pTop, pRight, pBottom)
-                setTint(if (isDelete) Color.RED else Color.BLUE)
-                draw(c)
-            }
-
-            super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive)
-        }
-
-        fun clearCanvas(c: Canvas, left: Float, top: Float, right: Float, bottom: Float) {
-            val paint = Paint().apply { color = Color.WHITE }
-            c.drawRect(left, top, right, bottom, paint)
-        }
-
-        override fun getSwipeThreshold(viewHolder: RecyclerView.ViewHolder): Float = 0.7f
-
+    private fun setItemTouchHelperCallback() = object : RecyclerTouchHelper(requireContext()) {
         override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
             val position: Int = viewHolder.adapterPosition
 

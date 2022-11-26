@@ -30,4 +30,6 @@
     <string name="button_cancel">cancelar</string>
     <string name="money_fragment_label">Gerenciar recursos</string>
 
+    <string name="button_new">novo</string>
+
 </resources>
