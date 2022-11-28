@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.Snackbar
+import com.lftf.shoppinglist.R
 import com.lftf.shoppinglist.databinding.FragmentMoneyBinding
 import com.lftf.shoppinglist.model.MoneyModel
 import com.lftf.shoppinglist.repository.local.MoneyRepository
@@ -28,12 +29,12 @@ class MoneyFragment : Fragment(), View.OnClickListener {
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentMoneyBinding.inflate(LayoutInflater.from(requireContext()))
-        adapter = MoneyAdapter(requireContext().applicationContext)
-        viewModel = MoneyViewModel.Companion.Factory(
-            MoneyRepository(requireContext())
-        ).create(MoneyViewModel::class.java).also {
-            it.getAll()
+        adapter = MoneyAdapter(requireContext().applicationContext) {
+            binding.totalLimit.text = getString(R.string.text_view_total_price).format(it)
         }
+        viewModel = MoneyViewModel.Factory(
+            MoneyRepository(requireContext())
+        ).create(MoneyViewModel::class.java).also { it.getAll() }
         return binding.root
     }
 
@@ -56,17 +57,6 @@ class MoneyFragment : Fragment(), View.OnClickListener {
     }
 
     private fun setRecyclerView() {
-        val list = listOf(
-            MoneyModel().apply {
-                method = "Alelo Felipe"
-                limit = 750f
-            },
-            MoneyModel().apply {
-                method = "Alelo Priscila"
-                limit = 200f
-            }
-        )
-
         ItemTouchHelper(object : RecyclerTouchHelper(requireContext()) {
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
                 val position: Int = viewHolder.adapterPosition
@@ -89,9 +79,6 @@ class MoneyFragment : Fragment(), View.OnClickListener {
         }).also {
             it.attachToRecyclerView(binding.recyclerViewMoney)
         }
-
-
-        adapter.updateList(list)
         binding.recyclerViewMoney.adapter = adapter
         binding.recyclerViewMoney.layoutManager = LinearLayoutManager(
             requireContext().applicationContext,
@@ -108,7 +95,6 @@ class MoneyFragment : Fragment(), View.OnClickListener {
 
     override fun onDestroy() {
         super.onDestroy()
-//        TODO("Implementar método para salvar ao sair")
         viewModel.saveAll()
     }
 }

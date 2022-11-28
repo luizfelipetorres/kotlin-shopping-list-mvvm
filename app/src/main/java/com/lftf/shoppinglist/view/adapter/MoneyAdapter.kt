@@ -5,6 +5,7 @@ import android.text.Editable
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.widget.EditText
 import androidx.recyclerview.widget.RecyclerView
 import com.lftf.shoppinglist.R
 import com.lftf.shoppinglist.databinding.RowMoneyBinding
@@ -14,12 +15,14 @@ import com.lftf.shoppinglist.view.adapter.MoneyAdapter.MoneyViewHolder
 import com.lftf.shoppinglist.view.listener.MoneyListener
 import com.lftf.shoppinglist.view.watcher.PriceWatcher
 
-class MoneyAdapter(val context: Context) : RecyclerView.Adapter<MoneyViewHolder>() {
+class MoneyAdapter(val context: Context, val updateSum: (sum: Float) -> Unit) :
+    RecyclerView.Adapter<MoneyViewHolder>() {
 
     private lateinit var binding: RowMoneyBinding
     private var moneyList: List<MoneyModel> = listOf()
 
-    class MoneyViewHolder(private val binding: RowMoneyBinding) : RecyclerView.ViewHolder(binding.root) {
+    class MoneyViewHolder(private val binding: RowMoneyBinding) :
+        RecyclerView.ViewHolder(binding.root) {
         fun bind(model: MoneyModel, listener: MoneyListener) {
             binding.etLimit.let {
                 it.addTextChangedListener(object : PriceWatcher(it) {
@@ -31,9 +34,12 @@ class MoneyAdapter(val context: Context) : RecyclerView.Adapter<MoneyViewHolder>
                     ) {
                         super.onTextChanged(s, start, before, count)
                         listener.changeLimit(Price.parsePrice(it.text.toString()))
+
                     }
                 })
-                it.setText(it.context.getString(R.string.price).format(model.limit))
+                if (model.limit != 0f) {
+                    it.setText(it.context.getString(R.string.price).format(model.limit))
+                }
             }
             binding.etPaymentMethod.let {
                 it.setText(model.method)
@@ -68,11 +74,14 @@ class MoneyAdapter(val context: Context) : RecyclerView.Adapter<MoneyViewHolder>
 
             override fun changeLimit(newLimite: Float) {
                 moneyList[holder.adapterPosition].limit = newLimite
+                updateSum(moneyList.map { e -> e.limit }.sum())
             }
         })
     }
 
     override fun getItemCount(): Int = moneyList.size
+
+    fun getSum() = moneyList.map { e -> e.limit }.sum()
 
     fun updateList(list: List<MoneyModel>) {
         moneyList = list
