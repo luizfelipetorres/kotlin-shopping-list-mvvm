@@ -2,10 +2,8 @@ package com.lftf.shoppinglist.view.adapter
 
 import android.content.Context
 import android.text.Editable
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import android.widget.EditText
 import androidx.recyclerview.widget.RecyclerView
 import com.lftf.shoppinglist.R
 import com.lftf.shoppinglist.databinding.RowMoneyBinding
@@ -16,10 +14,9 @@ import com.lftf.shoppinglist.view.listener.MoneyListener
 import com.lftf.shoppinglist.view.watcher.PriceWatcher
 
 class MoneyAdapter(val context: Context, val updateSum: (sum: Float) -> Unit) :
-    RecyclerView.Adapter<MoneyViewHolder>() {
+    AbstractAdapter<MoneyViewHolder, MoneyModel>() {
 
     private lateinit var binding: RowMoneyBinding
-    private var moneyList: List<MoneyModel> = listOf()
 
     class MoneyViewHolder(private val binding: RowMoneyBinding) :
         RecyclerView.ViewHolder(binding.root) {
@@ -34,7 +31,6 @@ class MoneyAdapter(val context: Context, val updateSum: (sum: Float) -> Unit) :
                     ) {
                         super.onTextChanged(s, start, before, count)
                         listener.changeLimit(Price.parsePrice(it.text.toString()))
-
                     }
                 })
                 if (model.limit != 0f) {
@@ -61,30 +57,20 @@ class MoneyAdapter(val context: Context, val updateSum: (sum: Float) -> Unit) :
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MoneyViewHolder {
-        Log.d("MoneyAdapter", "onCreateViewHolder")
         binding = RowMoneyBinding.inflate(LayoutInflater.from(parent.context))
         return MoneyViewHolder(binding)
     }
 
     override fun onBindViewHolder(holder: MoneyViewHolder, position: Int) {
-        holder.bind(moneyList[position], object : MoneyListener {
+        holder.bind(list[position], object : MoneyListener {
             override fun changeMethod(newMethod: String) {
-                moneyList[holder.adapterPosition].method = newMethod
+                list[holder.adapterPosition].method = newMethod
             }
 
             override fun changeLimit(newLimite: Float) {
-                moneyList[holder.adapterPosition].limit = newLimite
-                updateSum(moneyList.map { e -> e.limit }.sum())
+                list[holder.adapterPosition].limit = newLimite
+                updateSum(list.map { e -> e.limit }.sum())
             }
         })
-    }
-
-    override fun getItemCount(): Int = moneyList.size
-
-    fun getSum() = moneyList.map { e -> e.limit }.sum()
-
-    fun updateList(list: List<MoneyModel>) {
-        moneyList = list
-        notifyDataSetChanged()
     }
 }

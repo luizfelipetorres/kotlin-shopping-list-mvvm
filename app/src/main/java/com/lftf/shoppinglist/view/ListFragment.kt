@@ -123,12 +123,7 @@ class ListFragment : Fragment(), View.OnClickListener {
             binding.header.sortTitleImg.setImageResource(setImage(it))
         }
 
-        viewModel.list.observe(viewLifecycleOwner) {
-            if (it.size == adapter.getItensListSize())
-                adapter.sortList(it)
-            else
-                adapter.updateList(it)
-        }
+        viewModel.list.observe(viewLifecycleOwner) { adapter.updateList(it) }
 
         viewModel.message.observe(viewLifecycleOwner) {
             it?.let { string ->
