@@ -10,12 +10,9 @@ import com.lftf.shoppinglist.repository.local.MoneyRepository
 class MoneyViewModel(private val repository: MoneyRepository) : ViewModel() {
 
     @Suppress("UNCHECKED_CAST")
-    companion object {
-        class Factory(val repository: MoneyRepository) : ViewModelProvider.Factory {
-            override fun <T : ViewModel> create(modelClass: Class<T>): T {
-                return MoneyViewModel(repository) as T
-            }
-        }
+    class Factory(val repository: MoneyRepository) : ViewModelProvider.Factory {
+        override fun <T : ViewModel> create(modelClass: Class<T>): T =
+            MoneyViewModel(repository) as T
     }
 
     private val _list: MutableLiveData<List<MoneyModel>> = MutableLiveData<List<MoneyModel>>()

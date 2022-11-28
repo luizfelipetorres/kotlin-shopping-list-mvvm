@@ -5,23 +5,33 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.lftf.shoppinglist.model.ItemModel
+import com.lftf.shoppinglist.model.TotalValues
 import com.lftf.shoppinglist.repository.local.ItemRepository
+import com.lftf.shoppinglist.repository.local.MoneyRepository
 
-class MainViewModel(private val repository: ItemRepository) : ViewModel() {
+class MainViewModel(
+    private val itemRepository: ItemRepository,
+    private val moneyRepository: MoneyRepository
+) : ViewModel() {
 
     object SaveOptions {
         const val SAVED = 1
         const val UPDATED = 0
     }
 
-    companion object {
-        class Factory(private val repository: ItemRepository) : ViewModelProvider.Factory {
-            @Suppress("UNCHECKED_CAST")
-            override fun <T : ViewModel> create(modelClass: Class<T>): T {
-                return MainViewModel(repository = repository) as T
-            }
+    class Factory(
+        private val itemRepository: ItemRepository,
+        private val moneyRepository: MoneyRepository
+    ) : ViewModelProvider.Factory {
+        @Suppress("UNCHECKED_CAST")
+        override fun <T : ViewModel> create(modelClass: Class<T>): T {
+            return MainViewModel(
+                itemRepository = itemRepository,
+                moneyRepository = moneyRepository
+            ) as T
         }
     }
+
 
     private val _list = MutableLiveData<List<ItemModel>>()
     val list: LiveData<List<ItemModel>> = _list
@@ -29,8 +39,13 @@ class MainViewModel(private val repository: ItemRepository) : ViewModel() {
     private var _message = MutableLiveData<String?>()
     val message: LiveData<String?> = _message
 
-    private val _totalAmount = MutableLiveData<Float>()
-    val totalAmount: LiveData<Float> = _totalAmount
+    private val _totalValues = MutableLiveData<TotalValues>().apply {
+        value = TotalValues(
+            totalAmount = getTotalAmount(),
+            totalLimit = getTotalLimit()
+        )
+    }
+    val totalValues: LiveData<TotalValues> = _totalValues
 
     private val _lastItem = MutableLiveData<ItemModel?>()
     val lastItem: LiveData<ItemModel?> = _lastItem
@@ -93,20 +108,20 @@ class MainViewModel(private val repository: ItemRepository) : ViewModel() {
         _list.value?.let { sort(it) }
     }
 
-    private fun updateTotalAmount() {
-        _totalAmount.value = _list.value?.toMutableList()?.let {
-            if (it.isEmpty())
-                0f
-            else
-                it.map { i -> i.getTotalValue() }.reduce { previous, current -> previous + current }
-        }
-    }
+    private fun getTotalAmount(): Float = _list.value?.toMutableList()?.let {
+        if (it.isEmpty())
+            0f
+        else
+            it.map { i -> i.getTotalValue() }.sum()
+    } ?: 0f
 
     fun getAll() {
-        val allItens = repository.listAll()
+        val allItens = itemRepository.listAll()
         sort(allItens)
-        updateTotalAmount()
+        _totalValues.value = TotalValues(getTotalAmount(), getTotalLimit())
     }
+
+    private fun getTotalLimit(): Float = moneyRepository.listAll().map { it.limit }.sum() ?: 0f
 
     private fun message(msg: String) {
         _message.value = msg
@@ -117,23 +132,21 @@ class MainViewModel(private val repository: ItemRepository) : ViewModel() {
         val listFiltered = _list.value?.filter { it.id == item.id }
         val isEmptyList: Boolean = listFiltered?.isEmpty() ?: true
         val returnValue: Int = if (item.id == 0) {
-            repository.save(item)
+            itemRepository.save(item)
             SaveOptions.SAVED
         } else if (isEmptyList) {
-            repository.save(item)
+            itemRepository.save(item)
             SaveOptions.SAVED
         } else {
-            repository.update(item)
+            itemRepository.update(item)
             SaveOptions.UPDATED
         }
         getAll()
-
         return returnValue
-
     }
 
     fun delete(id: Int) {
-        repository.delete(id).also {
+        itemRepository.delete(id).also {
             message("Excluído com sucesso!")
             getAll()
         }
@@ -142,5 +155,11 @@ class MainViewModel(private val repository: ItemRepository) : ViewModel() {
     fun deleteAtPosition(position: Int) {
         val id = _list.value!![position].id
         delete(id)
+    }
+
+    fun updateTotalLimit(newLimit: Float) {
+        _totalValues.value = totalValues.value?.let {
+            TotalValues(it.totalAmount, newLimit)
+        }
     }
 }

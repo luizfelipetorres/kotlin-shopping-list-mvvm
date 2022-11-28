@@ -6,7 +6,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -15,6 +14,7 @@ import com.lftf.shoppinglist.R
 import com.lftf.shoppinglist.databinding.FragmentListBinding
 import com.lftf.shoppinglist.model.ItemModel
 import com.lftf.shoppinglist.repository.local.ItemRepository
+import com.lftf.shoppinglist.repository.local.MoneyRepository
 import com.lftf.shoppinglist.view.adapter.ItemAdapter
 import com.lftf.shoppinglist.view.listener.ItemListener
 import com.lftf.shoppinglist.view.touchhelper.RecyclerTouchHelper
@@ -24,10 +24,14 @@ class ListFragment : Fragment(), View.OnClickListener {
 
     private var _binding: FragmentListBinding? = null
     private val viewModel: MainViewModel by activityViewModels {
-        MainViewModel.Companion.Factory(ItemRepository(requireContext()))
+        MainViewModel.Factory(
+            ItemRepository(requireContext()),
+            MoneyRepository(requireContext())
+        )
     }
     private lateinit var adapter: ItemAdapter
     private val binding get() = _binding!!
+    private lateinit var formItem: FormItemFragment
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -36,14 +40,20 @@ class ListFragment : Fragment(), View.OnClickListener {
 
         _binding = FragmentListBinding.inflate(inflater, container, false)
         adapter = ItemAdapter(requireContext().applicationContext)
+        formItem = FormItemFragment()
         return binding.root
     }
 
     private fun setItemListener(): ItemListener = object : ItemListener {
         override fun onClick(item: ItemModel) {
-            findNavController().navigate(R.id.action_ListFragment_to_FormItemFragment)
+            showFormItem()
             viewModel.updateLastItem(item)
         }
+    }
+
+    private fun showFormItem() {
+        if (!formItem.isVisible)
+            formItem.show(parentFragmentManager, null)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -123,12 +133,7 @@ class ListFragment : Fragment(), View.OnClickListener {
             binding.header.sortTitleImg.setImageResource(setImage(it))
         }
 
-        viewModel.list.observe(viewLifecycleOwner) {
-            if (it.size == adapter.getItensListSize())
-                adapter.sortList(it)
-            else
-                adapter.updateList(it)
-        }
+        viewModel.list.observe(viewLifecycleOwner) { adapter.updateList(it) }
 
         viewModel.message.observe(viewLifecycleOwner) {
             it?.let { string ->
@@ -149,7 +154,7 @@ class ListFragment : Fragment(), View.OnClickListener {
 
     override fun onClick(v: View) {
         when (v.id) {
-            R.id.fab -> findNavController().navigate(R.id.action_ListFragment_to_FormItemFragment)
+            R.id.fab -> showFormItem()
             R.id.relative_price, R.id.sort_price_img, R.id.header_price -> viewModel.changeSortPrice()
             R.id.relative_title, R.id.sort_title_img, R.id.header_title -> viewModel.changeSortTitle()
         }

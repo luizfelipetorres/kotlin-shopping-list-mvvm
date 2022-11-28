@@ -10,9 +10,8 @@ import com.lftf.shoppinglist.databinding.RowItemBinding
 import com.lftf.shoppinglist.model.ItemModel
 import com.lftf.shoppinglist.view.listener.ItemListener
 
-class ItemAdapter(val context: Context) : RecyclerView.Adapter<ItemAdapter.ItemViewHolder>() {
+class ItemAdapter(val context: Context) : AbstractAdapter<ItemAdapter.ItemViewHolder, ItemModel>() {
     private lateinit var listener: ItemListener
-    private var itensList: List<ItemModel> = listOf()
 
     inner class ItemViewHolder(
         private val binding: RowItemBinding,
@@ -50,21 +49,14 @@ class ItemAdapter(val context: Context) : RecyclerView.Adapter<ItemAdapter.ItemV
     }
 
     override fun onBindViewHolder(holder: ItemViewHolder, position: Int) {
-        holder.bind(itensList[position])
-    }
-
-    override fun getItemCount(): Int = itensList.count()
-
-    fun updateList(list: List<ItemModel>) {
-        itensList = list
+        holder.bind(list[position])
     }
 
     fun sortList(list: List<ItemModel>) {
         updateList(list)
-        notifyDataSetChanged()
     }
 
-    fun getItensListSize() = itensList.size
+    fun getListSize() = list.size
 
     fun attachListener(listener: ItemListener) {
         this.listener = listener
