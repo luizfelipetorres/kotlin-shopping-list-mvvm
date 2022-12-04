@@ -33,9 +33,7 @@ class MoneyAdapter(val context: Context, val updateSum: (sum: Float) -> Unit) :
                         listener.changeLimit(Price.parsePrice(it.text.toString()))
                     }
                 })
-                if (model.limit != 0f) {
-                    it.setText(it.context.getString(R.string.price).format(model.limit))
-                }
+                it.setText(it.context.getString(R.string.price).format(model.limit))
             }
             binding.etPaymentMethod.let {
                 it.setText(model.method)

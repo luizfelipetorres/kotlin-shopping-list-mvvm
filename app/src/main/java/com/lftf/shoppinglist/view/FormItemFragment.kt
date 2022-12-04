@@ -115,8 +115,8 @@ class FormItemFragment : BottomSheetDialogFragment(), View.OnClickListener, View
     private fun setObservers() {
         viewModel.lastItem.observe(viewLifecycleOwner) {
             with(binding) {
+                lastItem = it
                 if (it != null) {
-                    lastItem = it
                     editTextTitle.setText(it.title)
                     editTextPrice.setText(formatPrice(it.price))
                     editTextQuantity.setText(
@@ -188,8 +188,8 @@ class FormItemFragment : BottomSheetDialogFragment(), View.OnClickListener, View
     }
 
     override fun onDismiss(dialog: DialogInterface) {
-        super.onDismiss(dialog)
         clearFields()
+        super.onDismiss(dialog)
     }
 
     override fun onDestroyView() {

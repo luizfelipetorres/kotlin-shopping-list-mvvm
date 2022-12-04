@@ -6,7 +6,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.navigation.NavController
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -21,7 +20,6 @@ import com.lftf.shoppinglist.viewmodel.MainViewModel
 import com.lftf.shoppinglist.viewmodel.MoneyViewModel
 
 class MoneyFragment : Fragment(), View.OnClickListener {
-    private lateinit var navController: NavController
     private lateinit var binding: FragmentMoneyBinding
     private lateinit var adapter: MoneyAdapter
     private lateinit var viewModel: MoneyViewModel
