@@ -1,7 +1,7 @@
 package com.lftf.shoppinglist.view
 
-import android.app.AlertDialog
 import android.content.Context.INPUT_METHOD_SERVICE
+import android.content.DialogInterface
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -11,9 +11,10 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.navigation.fragment.findNavController
+import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.lftf.shoppinglist.R
 import com.lftf.shoppinglist.databinding.FragmentFormItemBinding
 import com.lftf.shoppinglist.model.ItemModel
@@ -22,25 +23,39 @@ import com.lftf.shoppinglist.utils.Price.Companion.parsePrice
 import com.lftf.shoppinglist.view.watcher.PriceWatcher
 import com.lftf.shoppinglist.viewmodel.MainViewModel
 
-class FormItemFragment : Fragment(), View.OnClickListener, View.OnKeyListener {
+class FormItemFragment : BottomSheetDialogFragment(), View.OnClickListener, View.OnKeyListener {
 
     private var _binding: FragmentFormItemBinding? = null
     private val viewModel: MainViewModel by activityViewModels()
     private val binding get() = _binding!!
     private var lastItem: ItemModel? = null
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setStyle(STYLE_NO_FRAME, R.style.Theme_ShoppingList_Dialog)
+    }
+
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
+        inflater: LayoutInflater,
+        container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-
         _binding = FragmentFormItemBinding.inflate(inflater, container, false)
+        dialog?.let {
+            it.setOnShowListener { dialog ->
+                val d = dialog as BottomSheetDialog
+                d.behavior.state = BottomSheetBehavior.STATE_EXPANDED
+            }
+        }
+
         return binding.root
     }
+
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setClickListeners()
+
 
         setTextChangedListener()
 
@@ -94,10 +109,7 @@ class FormItemFragment : Fragment(), View.OnClickListener, View.OnKeyListener {
     }
 
     private fun setClickListeners() {
-        arrayOf(
-            binding.buttonSave,
-            binding.buttonCancel
-        ).forEach { i -> i.setOnClickListener(this) }
+        binding.buttonSave.setOnClickListener(this)
     }
 
     private fun setObservers() {
@@ -109,7 +121,6 @@ class FormItemFragment : Fragment(), View.OnClickListener, View.OnKeyListener {
                     editTextPrice.setText(formatPrice(it.price))
                     editTextQuantity.setText(
                         it.quantity.toString().let { if (it == "1") "" else it })
-                    buttonSave.text = getString(R.string.update)
                 }
             }
         }
@@ -117,13 +128,11 @@ class FormItemFragment : Fragment(), View.OnClickListener, View.OnKeyListener {
 
     override fun onClick(v: View) {
         when (v.id) {
-            R.id.button_save -> performSaveAction(v)
-
-            R.id.button_cancel -> findNavController().navigateUp()
+            R.id.button_save -> performSaveAction()
         }
     }
 
-    private fun performSaveAction(v: View) {
+    private fun performSaveAction() {
         try {
             val title = binding.editTextTitle.text.toString().let {
                 if (it == "") throw Exception("Preencha o nome do item!") else it
@@ -139,12 +148,8 @@ class FormItemFragment : Fragment(), View.OnClickListener, View.OnKeyListener {
                 this.quantity = quantity
                 this.price = price
             }.also {
-                if (viewModel.save(it) == MainViewModel.SaveOptions.SAVED)
-                    buildSuccessAlert(v)
-                else{
-                    manageKeyboard(v, false)
-                    findNavController().navigateUp()
-                }
+                viewModel.save(it)
+                dismiss()
             }
 
             binding.textLayoutTitle.isErrorEnabled = false
@@ -156,20 +161,12 @@ class FormItemFragment : Fragment(), View.OnClickListener, View.OnKeyListener {
         }
     }
 
-    private fun buildSuccessAlert(v: View) {
-        AlertDialog.Builder(context)
-            .setTitle(getString(R.string.alert_title_item_saved))
-            .setMessage(getString(R.string.alert_msg_item_saved))
-            .setPositiveButton(getString(R.string.alert_positive_button_item_saved)) { _, _ ->
-                clearFields()
-                binding.buttonSave.text = context?.getString(R.string.save)
-                binding.editTextTitle.requestFocus()
-            }
-            .setNegativeButton(getString(R.string.alert_negative_button_item_saved)) { _, _ ->
-                findNavController().navigateUp()
-                manageKeyboard(v, false)
-            }
-            .show()
+    override fun onKey(v: View, keyCode: Int, event: KeyEvent): Boolean = when (keyCode) {
+        KeyEvent.KEYCODE_ENTER -> {
+            manageKeyboard(v, show = false)
+            true
+        }
+        else -> false
     }
 
     private fun clearFields() {
@@ -181,14 +178,6 @@ class FormItemFragment : Fragment(), View.OnClickListener, View.OnKeyListener {
         viewModel.updateLastItem(null)
     }
 
-    override fun onKey(v: View, keyCode: Int, event: KeyEvent): Boolean = when (keyCode) {
-        KeyEvent.KEYCODE_ENTER -> {
-            manageKeyboard(v, show = false)
-            true
-        }
-        else -> false
-    }
-
     private fun manageKeyboard(v: View, show: Boolean) {
         val inputMethodManager =
             activity?.getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
@@ -196,6 +185,11 @@ class FormItemFragment : Fragment(), View.OnClickListener, View.OnKeyListener {
             inputMethodManager.showSoftInput(v, InputMethodManager.SHOW_IMPLICIT)
         else
             inputMethodManager.hideSoftInputFromWindow(v.windowToken, 0)
+    }
+
+    override fun onDismiss(dialog: DialogInterface) {
+        super.onDismiss(dialog)
+        clearFields()
     }
 
     override fun onDestroyView() {
