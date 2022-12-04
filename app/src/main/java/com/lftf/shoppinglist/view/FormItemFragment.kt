@@ -1,6 +1,7 @@
 package com.lftf.shoppinglist.view
 
 import android.content.Context.INPUT_METHOD_SERVICE
+import android.content.DialogInterface
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -9,6 +10,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
+import android.widget.EditText
 import androidx.fragment.app.activityViewModels
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
@@ -167,6 +169,15 @@ class FormItemFragment : BottomSheetDialogFragment(), View.OnClickListener, View
         else -> false
     }
 
+    private fun clearFields() {
+        listOf<EditText>(
+            binding.editTextTitle,
+            binding.editTextPrice,
+            binding.editTextQuantity
+        ).forEach { i -> i.setText("") }
+        viewModel.updateLastItem(null)
+    }
+
     private fun manageKeyboard(v: View, show: Boolean) {
         val inputMethodManager =
             activity?.getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
@@ -174,6 +185,11 @@ class FormItemFragment : BottomSheetDialogFragment(), View.OnClickListener, View
             inputMethodManager.showSoftInput(v, InputMethodManager.SHOW_IMPLICIT)
         else
             inputMethodManager.hideSoftInputFromWindow(v.windowToken, 0)
+    }
+
+    override fun onDismiss(dialog: DialogInterface) {
+        super.onDismiss(dialog)
+        clearFields()
     }
 
     override fun onDestroyView() {
