@@ -38,34 +38,39 @@ Todas as entidades a baixo são armazenadas no armazenamento local do dispositiv
 <details>
 
 <summary>Inserir</summary>
-![insert.gif](./assets/insert.gif)
+
+<image src="gifs/insert.gif" height=800rem>
 
 </details>
 
 <details>
 
 <summary>Deletar</summary>
-![insert.gif](./assets/delete.gif)
+
+<image src="gifs/delete.gif" height=800rem>
 
 </details>
 
 <details>
 
 <summary>Ordenar</summary>
-![insert.gif](./assets/sort.gif)
+
+<image src="gifs/sort.gif" height=800rem>
 
 </details>
 
 <details>
 
 <summary>Adicionar forma de pagamento</summary>
-![insert.gif](./assets/add-payment-method.gif)
+
+<image src="gifs/add-payment-method.gif" height=800rem>
 
 </details>
 
 <details>
 
-<summary>Deletar</summary>
-![insert.gif](./assets/delete.gif)
+<summary>Editar</summary>
+
+<image src="gifs/edit.gif" height=800rem>
 
 </details>
