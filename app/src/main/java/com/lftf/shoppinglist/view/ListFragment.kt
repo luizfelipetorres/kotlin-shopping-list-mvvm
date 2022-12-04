@@ -15,6 +15,7 @@ import com.lftf.shoppinglist.R
 import com.lftf.shoppinglist.databinding.FragmentListBinding
 import com.lftf.shoppinglist.model.ItemModel
 import com.lftf.shoppinglist.repository.local.ItemRepository
+import com.lftf.shoppinglist.repository.local.MoneyRepository
 import com.lftf.shoppinglist.view.adapter.ItemAdapter
 import com.lftf.shoppinglist.view.listener.ItemListener
 import com.lftf.shoppinglist.view.touchhelper.RecyclerTouchHelper
@@ -24,7 +25,10 @@ class ListFragment : Fragment(), View.OnClickListener {
 
     private var _binding: FragmentListBinding? = null
     private val viewModel: MainViewModel by activityViewModels {
-        MainViewModel.Companion.Factory(ItemRepository(requireContext()))
+        MainViewModel.Factory(
+            ItemRepository(requireContext()),
+            MoneyRepository(requireContext())
+        )
     }
     private lateinit var adapter: ItemAdapter
     private val binding get() = _binding!!

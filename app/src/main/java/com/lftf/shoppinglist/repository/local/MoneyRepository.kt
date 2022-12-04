@@ -8,7 +8,8 @@ import com.lftf.shoppinglist.repository.interfaces.IMoneyRepository
 
 class MoneyRepository(
     context: Context
-) : AbstractRepository<MoneyModel>(DatabaseHelper.getInstance(context).moneyDao()), IMoneyRepository {
+) : AbstractRepository<MoneyModel>(DatabaseHelper.getInstance(context).moneyDao()),
+    IMoneyRepository {
 
     private val db = DatabaseHelper.getInstance(context).moneyDao()
 
