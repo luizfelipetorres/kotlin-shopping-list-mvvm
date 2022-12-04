@@ -25,7 +25,7 @@ class ListFragment : Fragment(), View.OnClickListener {
 
     private var _binding: FragmentListBinding? = null
     private val viewModel: MainViewModel by activityViewModels {
-        MainViewModel.Companion.Factory(
+        MainViewModel.Factory(
             ItemRepository(requireContext()),
             MoneyRepository(requireContext())
         )

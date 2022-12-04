@@ -23,8 +23,8 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var binding: ActivityMainBinding
-    private val listViewModel: MainViewModel by viewModels {
-        MainViewModel.Companion.Factory(
+    private val mainViewModel: MainViewModel by viewModels<MainViewModel> {
+        MainViewModel.Factory(
             ItemRepository(this),
             MoneyRepository(this)
         )
@@ -46,13 +46,13 @@ class MainActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        listViewModel.getAll()
+        mainViewModel.getAll()
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.menu_main, menu)
 
-        listViewModel.totalValues.observe(this) {
+        mainViewModel.totalValues.observe(this) {
             changeTotal(it, menu)
         }
         return false

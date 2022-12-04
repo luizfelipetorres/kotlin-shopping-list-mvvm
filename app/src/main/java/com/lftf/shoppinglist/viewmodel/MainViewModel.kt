@@ -19,20 +19,19 @@ class MainViewModel(
         const val UPDATED = 0
     }
 
-    companion object {
-        class Factory(
-            private val itemRepository: ItemRepository,
-            private val moneyRepository: MoneyRepository
-        ) : ViewModelProvider.Factory {
-            @Suppress("UNCHECKED_CAST")
-            override fun <T : ViewModel> create(modelClass: Class<T>): T {
-                return MainViewModel(
-                    itemRepository = itemRepository,
-                    moneyRepository = moneyRepository
-                ) as T
-            }
+    class Factory(
+        private val itemRepository: ItemRepository,
+        private val moneyRepository: MoneyRepository
+    ) : ViewModelProvider.Factory {
+        @Suppress("UNCHECKED_CAST")
+        override fun <T : ViewModel> create(modelClass: Class<T>): T {
+            return MainViewModel(
+                itemRepository = itemRepository,
+                moneyRepository = moneyRepository
+            ) as T
         }
     }
+
 
     private val _list = MutableLiveData<List<ItemModel>>()
     val list: LiveData<List<ItemModel>> = _list
