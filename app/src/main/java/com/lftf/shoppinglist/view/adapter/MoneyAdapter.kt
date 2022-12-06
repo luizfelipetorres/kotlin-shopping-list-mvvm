@@ -8,7 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.lftf.shoppinglist.R
 import com.lftf.shoppinglist.databinding.RowMoneyBinding
 import com.lftf.shoppinglist.model.MoneyModel
-import com.lftf.shoppinglist.utils.Price
+import com.lftf.shoppinglist.utils.parsePrice
 import com.lftf.shoppinglist.view.adapter.MoneyAdapter.MoneyViewHolder
 import com.lftf.shoppinglist.view.listener.MoneyListener
 import com.lftf.shoppinglist.view.watcher.PriceWatcher
@@ -30,7 +30,7 @@ class MoneyAdapter(val context: Context, val updateSum: (sum: Float) -> Unit) :
                         count: Int
                     ) {
                         super.onTextChanged(s, start, before, count)
-                        listener.changeLimit(Price.parsePrice(it.text.toString()))
+                        listener.changeLimit(it.text.toString().parsePrice())
                     }
                 })
                 it.setText(it.context.getString(R.string.price).format(model.limit))

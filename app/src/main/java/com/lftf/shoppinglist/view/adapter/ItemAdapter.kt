@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.lftf.shoppinglist.R
 import com.lftf.shoppinglist.databinding.RowItemBinding
 import com.lftf.shoppinglist.model.ItemModel
+import com.lftf.shoppinglist.utils.formatPrice
 import com.lftf.shoppinglist.view.listener.ItemListener
 
 class ItemAdapter(val context: Context) : AbstractAdapter<ItemAdapter.ItemViewHolder, ItemModel>() {
@@ -21,9 +22,12 @@ class ItemAdapter(val context: Context) : AbstractAdapter<ItemAdapter.ItemViewHo
         fun bind(model: ItemModel) {
 
             val strPrice = if (model.quantity > 1)
-                context.getString(R.string.total_price).format(model.price, model.getTotalValue())
+                context.getString(R.string.total_price).format(
+                    model.price.formatPrice(),
+                    model.getTotalValue().formatPrice()
+                )
             else
-                context.getString(R.string.price).format(model.price)
+                context.getString(R.string.price).format(model.price.formatPrice())
 
             binding.itemTitle.text = model.title
             binding.itemQuantity.text = model.quantity.toString()
@@ -51,12 +55,6 @@ class ItemAdapter(val context: Context) : AbstractAdapter<ItemAdapter.ItemViewHo
     override fun onBindViewHolder(holder: ItemViewHolder, position: Int) {
         holder.bind(list[position])
     }
-
-    fun sortList(list: List<ItemModel>) {
-        updateList(list)
-    }
-
-    fun getListSize() = list.size
 
     fun attachListener(listener: ItemListener) {
         this.listener = listener

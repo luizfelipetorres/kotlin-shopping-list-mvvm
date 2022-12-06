@@ -12,6 +12,7 @@ import androidx.navigation.ui.onNavDestinationSelected
 import androidx.navigation.ui.setupActionBarWithNavController
 import com.lftf.shoppinglist.databinding.ActivityMainBinding
 import com.lftf.shoppinglist.model.TotalValues
+import com.lftf.shoppinglist.utils.formatPrice
 import com.lftf.shoppinglist.viewmodel.MainViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -52,7 +53,10 @@ class MainActivity : AppCompatActivity() {
 
     private fun changeTotal(totalValues: TotalValues, menu: Menu) {
         val remaining = totalValues.totalLimit - totalValues.totalAmount
-        val strTotal = getString(R.string.total_price).format(totalValues.totalAmount, remaining)
+        val strTotal = getString(R.string.total_price).format(
+            totalValues.totalAmount.formatPrice(),
+            remaining.formatPrice()
+        )
         menu.findItem(R.id.MoneyFragment).title = strTotal
     }
 
