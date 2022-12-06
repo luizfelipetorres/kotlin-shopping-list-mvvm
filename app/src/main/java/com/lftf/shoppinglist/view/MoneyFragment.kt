@@ -5,7 +5,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -13,26 +12,24 @@ import com.google.android.material.snackbar.Snackbar
 import com.lftf.shoppinglist.R
 import com.lftf.shoppinglist.databinding.FragmentMoneyBinding
 import com.lftf.shoppinglist.model.MoneyModel
-import com.lftf.shoppinglist.repository.local.MoneyRepository
 import com.lftf.shoppinglist.view.adapter.MoneyAdapter
 import com.lftf.shoppinglist.view.touchhelper.RecyclerTouchHelper
 import com.lftf.shoppinglist.viewmodel.MainViewModel
 import com.lftf.shoppinglist.viewmodel.MoneyViewModel
+import org.koin.androidx.viewmodel.ext.android.activityViewModel
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class MoneyFragment : Fragment(), View.OnClickListener {
     private lateinit var binding: FragmentMoneyBinding
     private lateinit var adapter: MoneyAdapter
-    private lateinit var viewModel: MoneyViewModel
-    private val mainViewModel: MainViewModel by activityViewModels()
+    private val moneyViewModel: MoneyViewModel by viewModel()
+    private val mainViewModel: MainViewModel by activityViewModel()
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentMoneyBinding.inflate(LayoutInflater.from(requireContext()))
-        viewModel = MoneyViewModel.Factory(
-            MoneyRepository(requireContext())
-        ).create(MoneyViewModel::class.java).also { it.getAll() }
-
+        moneyViewModel.getAll()
         adapter = MoneyAdapter(requireContext().applicationContext) {
             totalLimit(it)
         }
@@ -46,7 +43,7 @@ class MoneyFragment : Fragment(), View.OnClickListener {
     }
 
     private fun setObservers() {
-        viewModel.list.observe(viewLifecycleOwner) {
+        moneyViewModel.list.observe(viewLifecycleOwner) {
             val sum = it.map { e -> e.limit }.sum()
             adapter.updateList(it)
             totalLimit(sum)
@@ -64,15 +61,15 @@ class MoneyFragment : Fragment(), View.OnClickListener {
                 val position: Int = viewHolder.adapterPosition
 
                 if (direction == ItemTouchHelper.END) {
-                    val deletedItem: MoneyModel? = viewModel.list.value?.get(position)
-                    viewModel.deleteAtPosition(position)
+                    val deletedItem: MoneyModel? = moneyViewModel.list.value?.get(position)
+                    moneyViewModel.deleteAtPosition(position)
                     adapter.notifyItemRemoved(position)
 
                     val stringSnack =
                         "Item deletado!"
                     Snackbar.make(binding.recyclerViewMoney, stringSnack, Snackbar.LENGTH_LONG)
                         .setAction("Desfazer") {
-                            deletedItem?.let { item -> viewModel.save(item) }
+                            deletedItem?.let { item -> moneyViewModel.save(item) }
                             adapter.notifyItemInserted(position)
                         }.show()
                 }
@@ -90,7 +87,7 @@ class MoneyFragment : Fragment(), View.OnClickListener {
 
     override fun onClick(v: View) {
         when (v.id) {
-            binding.fabAddMoney.id -> viewModel.addToList()
+            binding.fabAddMoney.id -> moneyViewModel.addToList()
         }
     }
 
@@ -106,6 +103,6 @@ class MoneyFragment : Fragment(), View.OnClickListener {
 
     override fun onDestroy() {
         super.onDestroy()
-        viewModel.saveAll()
+        moneyViewModel.saveAll()
     }
 }
