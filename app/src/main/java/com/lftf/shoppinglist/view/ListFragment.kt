@@ -5,7 +5,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -13,22 +12,16 @@ import com.google.android.material.snackbar.Snackbar
 import com.lftf.shoppinglist.R
 import com.lftf.shoppinglist.databinding.FragmentListBinding
 import com.lftf.shoppinglist.model.ItemModel
-import com.lftf.shoppinglist.repository.local.ItemRepository
-import com.lftf.shoppinglist.repository.local.MoneyRepository
 import com.lftf.shoppinglist.view.adapter.ItemAdapter
 import com.lftf.shoppinglist.view.listener.ItemListener
 import com.lftf.shoppinglist.view.touchhelper.RecyclerTouchHelper
 import com.lftf.shoppinglist.viewmodel.MainViewModel
+import org.koin.androidx.viewmodel.ext.android.activityViewModel
 
 class ListFragment : Fragment(), View.OnClickListener {
 
     private var _binding: FragmentListBinding? = null
-    private val viewModel: MainViewModel by activityViewModels {
-        MainViewModel.Factory(
-            ItemRepository(requireContext()),
-            MoneyRepository(requireContext())
-        )
-    }
+    private val viewModel: MainViewModel by activityViewModel()
     private lateinit var adapter: ItemAdapter
     private val binding get() = _binding!!
     private lateinit var formItem: FormItemFragment
