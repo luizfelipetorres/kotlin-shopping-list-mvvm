@@ -3,7 +3,6 @@ package com.lftf.shoppinglist
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
-import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
@@ -13,9 +12,8 @@ import androidx.navigation.ui.onNavDestinationSelected
 import androidx.navigation.ui.setupActionBarWithNavController
 import com.lftf.shoppinglist.databinding.ActivityMainBinding
 import com.lftf.shoppinglist.model.TotalValues
-import com.lftf.shoppinglist.repository.local.ItemRepository
-import com.lftf.shoppinglist.repository.local.MoneyRepository
 import com.lftf.shoppinglist.viewmodel.MainViewModel
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 const val TAG = "D/MainActivity"
 
@@ -23,13 +21,7 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var binding: ActivityMainBinding
-    private val mainViewModel: MainViewModel by viewModels<MainViewModel> {
-        MainViewModel.Factory(
-            ItemRepository(this),
-            MoneyRepository(this)
-        )
-    }
-
+    private val mainViewModel: MainViewModel by viewModel()
     private lateinit var navController: NavController
 
     override fun onCreate(savedInstanceState: Bundle?) {

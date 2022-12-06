@@ -3,7 +3,6 @@ package com.lftf.shoppinglist.viewmodel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import com.lftf.shoppinglist.model.ItemModel
 import com.lftf.shoppinglist.model.TotalValues
 import com.lftf.shoppinglist.repository.local.ItemRepository
@@ -17,19 +16,6 @@ class MainViewModel(
     object SaveOptions {
         const val SAVED = 1
         const val UPDATED = 0
-    }
-
-    class Factory(
-        private val itemRepository: ItemRepository,
-        private val moneyRepository: MoneyRepository
-    ) : ViewModelProvider.Factory {
-        @Suppress("UNCHECKED_CAST")
-        override fun <T : ViewModel> create(modelClass: Class<T>): T {
-            return MainViewModel(
-                itemRepository = itemRepository,
-                moneyRepository = moneyRepository
-            ) as T
-        }
     }
 
 

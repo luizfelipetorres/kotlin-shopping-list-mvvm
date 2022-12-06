@@ -11,7 +11,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
-import androidx.fragment.app.activityViewModels
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
@@ -22,11 +21,12 @@ import com.lftf.shoppinglist.utils.Price.Companion.formatPrice
 import com.lftf.shoppinglist.utils.Price.Companion.parsePrice
 import com.lftf.shoppinglist.view.watcher.PriceWatcher
 import com.lftf.shoppinglist.viewmodel.MainViewModel
+import org.koin.androidx.viewmodel.ext.android.activityViewModel
 
 class FormItemFragment : BottomSheetDialogFragment(), View.OnClickListener, View.OnKeyListener {
 
     private var _binding: FragmentFormItemBinding? = null
-    private val viewModel: MainViewModel by activityViewModels()
+    private val viewModel: MainViewModel by activityViewModel()
     private val binding get() = _binding!!
     private var lastItem: ItemModel? = null
 
