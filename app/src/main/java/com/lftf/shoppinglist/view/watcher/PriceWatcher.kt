@@ -3,7 +3,8 @@ package com.lftf.shoppinglist.view.watcher
 import android.text.Editable
 import android.text.TextWatcher
 import android.widget.EditText
-import com.lftf.shoppinglist.utils.Price
+import com.lftf.shoppinglist.utils.formatPrice
+import com.lftf.shoppinglist.utils.parsePrice
 
 open class PriceWatcher(val field: EditText) : TextWatcher {
     private var current = ""
@@ -19,8 +20,8 @@ open class PriceWatcher(val field: EditText) : TextWatcher {
         if (s.toString() != current) {
             field.removeTextChangedListener(this)
 
-            val parsed = Price.parsePrice(s?.toString() ?: "")
-            val formatted = Price.formatPrice(parsed)
+            val parsed = s?.toString()?.parsePrice() ?: 0f
+            val formatted = parsed.formatPrice()
 
             current = formatted
             field.setText(formatted)

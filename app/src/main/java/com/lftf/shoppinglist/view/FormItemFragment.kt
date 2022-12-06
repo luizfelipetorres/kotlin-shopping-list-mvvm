@@ -17,8 +17,8 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.lftf.shoppinglist.R
 import com.lftf.shoppinglist.databinding.FragmentFormItemBinding
 import com.lftf.shoppinglist.model.ItemModel
-import com.lftf.shoppinglist.utils.Price.Companion.formatPrice
-import com.lftf.shoppinglist.utils.Price.Companion.parsePrice
+import com.lftf.shoppinglist.utils.formatPrice
+import com.lftf.shoppinglist.utils.parsePrice
 import com.lftf.shoppinglist.view.watcher.PriceWatcher
 import com.lftf.shoppinglist.viewmodel.MainViewModel
 import org.koin.androidx.viewmodel.ext.android.activityViewModel
@@ -78,7 +78,7 @@ class FormItemFragment : BottomSheetDialogFragment(), View.OnClickListener, View
 
     private fun setTotalPrice() {
         with(binding) {
-            val price = parsePrice(binding.editTextPrice.text.toString())
+            val price = editTextPrice.text.toString().parsePrice()
 
             val quantity = editTextQuantity.text.toString().let { q ->
                 if (q.isEmpty()) 1 else q.toInt()
@@ -86,7 +86,7 @@ class FormItemFragment : BottomSheetDialogFragment(), View.OnClickListener, View
 
             val total = price * quantity
             if (total > 0) {
-                getString(R.string.text_view_total_price).format(total).let { str ->
+                getString(R.string.text_view_total_price).format(total.formatPrice()).let { str ->
                     textViewTotalPrice.text = str
                 }
             } else {
@@ -118,7 +118,7 @@ class FormItemFragment : BottomSheetDialogFragment(), View.OnClickListener, View
                 lastItem = it
                 if (it != null) {
                     editTextTitle.setText(it.title)
-                    editTextPrice.setText(formatPrice(it.price))
+                    editTextPrice.setText(it.price.formatPrice())
                     editTextQuantity.setText(
                         it.quantity.toString().let { if (it == "1") "" else it })
                 }
@@ -140,7 +140,7 @@ class FormItemFragment : BottomSheetDialogFragment(), View.OnClickListener, View
             val quantity = binding.editTextQuantity.text.toString().let {
                 if (it == "") 1 else it.toInt()
             }
-            val price = parsePrice(binding.editTextPrice.text.toString())
+            val price = binding.editTextPrice.text.toString().parsePrice()
 
             ItemModel().apply {
                 this.id = lastItem?.id ?: 0

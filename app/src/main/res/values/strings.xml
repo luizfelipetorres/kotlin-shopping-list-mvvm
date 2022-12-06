@@ -14,14 +14,14 @@
     <string name="header_item">Item</string>
     <string name="header_quantity">Qtd</string>
     <string name="header_price">Valor</string>
-    <string name="price">R$ %.2f</string>
-    <string name="total_price">R$ %.2f\n(R$ %.2f)</string>
+    <string name="price">R$ %s</string>
+    <string name="total_price">%s\n(%s)</string>
     <string name="alert_msg_item_saved">Deseja cadastrar mais um item OU voltar para a lista?</string>
     <string name="alert_title_item_saved">Item salvo!</string>
     <string name="alert_positive_button_item_saved">Mais um</string>
     <string name="alert_negative_button_item_saved">Voltar</string>
     <string name="update">Atualizar</string>
-    <string name="text_view_total_price">Total: R$ %.2f</string>
+    <string name="text_view_total_price">Total: %s</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="hint_payment_method">Forma de pagamento</string>

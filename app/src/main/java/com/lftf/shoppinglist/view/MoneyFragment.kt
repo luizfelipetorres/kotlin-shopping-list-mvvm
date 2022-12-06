@@ -12,6 +12,7 @@ import com.google.android.material.snackbar.Snackbar
 import com.lftf.shoppinglist.R
 import com.lftf.shoppinglist.databinding.FragmentMoneyBinding
 import com.lftf.shoppinglist.model.MoneyModel
+import com.lftf.shoppinglist.utils.formatPrice
 import com.lftf.shoppinglist.view.adapter.MoneyAdapter
 import com.lftf.shoppinglist.view.touchhelper.RecyclerTouchHelper
 import com.lftf.shoppinglist.viewmodel.MainViewModel
@@ -95,7 +96,8 @@ class MoneyFragment : Fragment(), View.OnClickListener {
         if (total == 0f) {
             binding.totalLimit.visibility = View.GONE
         } else {
-            binding.totalLimit.text = getString(R.string.text_view_total_price).format(total)
+            binding.totalLimit.text =
+                getString(R.string.text_view_total_price).format(total.formatPrice())
             mainViewModel.updateTotalLimit(total)
             binding.totalLimit.visibility = View.VISIBLE
         }
