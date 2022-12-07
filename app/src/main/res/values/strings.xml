@@ -25,10 +25,9 @@
     <string name="header_price">Valor</string>
 
     <!--    Price-->
-    <string name="price">R$ %s</string>
+    <string name="price">%s</string>
     <string name="total_price">%s\n(%s)</string>
     <string name="text_view_total_price">Total: %s</string>
-
 
     <!--    Description-->
     <string name="fab_content_description">Adicionar nova forma de pagamento</string>
