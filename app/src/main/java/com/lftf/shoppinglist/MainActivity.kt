@@ -8,7 +8,6 @@ import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
-import androidx.navigation.ui.onNavDestinationSelected
 import androidx.navigation.ui.setupActionBarWithNavController
 import com.lftf.shoppinglist.databinding.ActivityMainBinding
 import com.lftf.shoppinglist.model.TotalValues
@@ -62,7 +61,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            R.id.MoneyFragment -> item.onNavDestinationSelected(navController)
+            R.id.MoneyFragment -> navController.navigate(R.id.action_ListFragment_to_MoneyFragment)
             else -> onSupportNavigateUp()
         }
 
