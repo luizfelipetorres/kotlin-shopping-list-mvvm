@@ -16,9 +16,6 @@
         android:label="@string/form_item_fragment_label"
         tools:layout="@layout/fragment_form_item">
 
-        <action
-            android:id="@+id/action_ListFragment_to_MoneyFragment"
-            app:destination="@id/MoneyFragment" />
         <argument
             android:name="isNew"
             app:argType="boolean"
@@ -32,7 +29,11 @@
 
         <action
             android:id="@+id/action_ListFragment_to_MoneyFragment"
-            app:destination="@id/MoneyFragment" />
+            app:destination="@id/MoneyFragment"
+            app:enterAnim="@anim/from_left"
+            app:exitAnim="@anim/to_right"
+            app:popEnterAnim="@anim/from_right"
+            app:popExitAnim="@anim/to_left" />
         <action
             android:id="@+id/action_ListFragment_to_FormItemFragment"
             app:destination="@id/FormItemFragment"
