@@ -3,12 +3,11 @@ package com.lftf.shoppinglist.repository.local
 import android.content.Context
 import com.lftf.shoppinglist.data.DatabaseHelper
 import com.lftf.shoppinglist.model.MoneyModel
-import com.lftf.shoppinglist.repository.AbstractRepository
 import com.lftf.shoppinglist.repository.interfaces.IMoneyRepository
 
 class MoneyRepository(
     context: Context
-) : AbstractRepository<MoneyModel>(DatabaseHelper.getInstance(context).moneyDao()),
+) : RoomRepository<MoneyModel>(DatabaseHelper.getInstance(context).moneyDao()),
     IMoneyRepository {
 
     private val db = DatabaseHelper.getInstance(context).moneyDao()
