@@ -46,7 +46,6 @@ class FormItemFragment : BottomSheetDialogFragment(), View.OnClickListener, View
                 d.behavior.state = BottomSheetBehavior.STATE_EXPANDED
             }
         }
-
         return binding.root
     }
 
@@ -54,7 +53,6 @@ class FormItemFragment : BottomSheetDialogFragment(), View.OnClickListener, View
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setClickListeners()
-
 
         setTextChangedListener()
 
