@@ -28,8 +28,7 @@
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab_add_money"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        style="@style/Theme.ShoppingList.FloatingActionButton"
         android:layout_margin="16dp"
         android:contentDescription="@string/fab_content_description"
         android:src="@drawable/ic_add"

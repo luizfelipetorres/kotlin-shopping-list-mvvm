@@ -31,5 +31,6 @@
 
     <!--    Description-->
     <string name="fab_content_description">Adicionar nova forma de pagamento</string>
+    <string name="description_add_new_item">Adicionar novo item</string>
 
 </resources>
