@@ -21,10 +21,10 @@
             android:layout_toLeftOf="@+id/til_limit"
             tools:ignore="RtlHardcoded">
 
-            <EditText
+            <com.google.android.material.textfield.TextInputEditText
+                style="@style/Theme.ShoppingList.TextInputEditText"
+                android:drawableLeft="@drawable/ic_wallet"
                 android:id="@+id/et_payment_method"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
                 android:hint="@string/hint_payment_method"
                 tools:ignore="RtlHardcoded"
                 android:inputType="textCapSentences"
@@ -40,13 +40,13 @@
             android:layout_margin="4dp"
             tools:ignore="RtlHardcoded">
 
-            <EditText
+            <com.google.android.material.textfield.TextInputEditText
+                style="@style/Theme.ShoppingList.TextInputEditText"
+                android:drawableLeft="@drawable/ic_money"
                 android:id="@+id/et_limit"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
                 android:hint="@string/hint_payment_limit"
                 android:inputType="number"
-                android:minWidth="100dp"
+                android:minWidth="150dp"
                 tools:ignore="RtlHardcoded"
                 android:importantForAutofill="no" />
         </com.google.android.material.textfield.TextInputLayout>

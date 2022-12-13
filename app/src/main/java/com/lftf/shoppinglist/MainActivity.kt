@@ -61,7 +61,10 @@ class MainActivity : AppCompatActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            R.id.MoneyFragment -> navController.navigate(R.id.action_ListFragment_to_MoneyFragment)
+            R.id.MoneyFragment -> {
+                if (navController.currentDestination?.id != R.id.MoneyFragment)
+                    navController.navigate(R.id.action_global_MoneyFragment)
+            }
             else -> onSupportNavigateUp()
         }
 
