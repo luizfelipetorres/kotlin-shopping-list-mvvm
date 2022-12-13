@@ -25,13 +25,10 @@
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/edit_text_title"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            style="@style/TextInputFormItem"
+            android:drawableLeft="@drawable/ic_shopping_cart"
             android:hint="@string/hint_title"
-            android:inputType="text"
-            android:textColor="@color/black">
-
-        </com.google.android.material.textfield.TextInputEditText>
+            android:inputType="text" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
@@ -48,13 +45,10 @@
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/edit_text_price"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            style="@style/TextInputFormItem"
+            android:drawableLeft="@drawable/ic_money"
             android:hint="@string/hint_price"
-            android:inputType="numberDecimal"
-            android:textColor="@color/black">
-
-        </com.google.android.material.textfield.TextInputEditText>
+            android:inputType="numberDecimal" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
@@ -63,21 +57,16 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-
-
         app:layout_constraintEnd_toEndOf="@id/text_layout_title"
         app:layout_constraintStart_toStartOf="@id/text_layout_title"
         app:layout_constraintTop_toBottomOf="@id/text_layout_price">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/edit_text_quantity"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            style="@style/TextInputFormItem"
+            android:drawableLeft="@drawable/ic_123"
             android:hint="@string/hint_quantity"
-            android:inputType="number"
-            android:textColor="@color/black">
-
-        </com.google.android.material.textfield.TextInputEditText>
+            android:inputType="number" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <TextView
