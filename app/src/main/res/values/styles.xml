@@ -13,4 +13,12 @@
     <style name="BottomSheetStyle" parent="Widget.Design.BottomSheet.Modal">
         <item name="android:background">#0fff</item>
     </style>
+
+    <style name="TextInputFormItem">
+        <item name="drawableTint">@color/design_default_color_primary</item>
+        <item name="android:drawablePadding">16dp</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:textColor">@color/black</item>
+    </style>
 </resources>
