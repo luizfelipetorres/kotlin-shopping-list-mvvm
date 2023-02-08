@@ -25,8 +25,8 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
     }
     kotlinOptions {
         jvmTarget = '1.8'
@@ -54,7 +54,7 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
 
     //Koin
-    def koin_android_version = "3.3.0"
+    def koin_android_version = '3.3.2'
     implementation "io.insert-koin:koin-android:$koin_android_version"
     implementation "io.insert-koin:koin-android-compat:$koin_android_version"
     implementation "io.insert-koin:koin-androidx-workmanager:$koin_android_version"
