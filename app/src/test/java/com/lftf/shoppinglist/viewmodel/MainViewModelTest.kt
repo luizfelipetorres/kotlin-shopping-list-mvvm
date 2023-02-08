@@ -8,6 +8,7 @@ import com.lftf.shoppinglist.model.ItemModel
 import com.lftf.shoppinglist.model.MoneyModel
 import com.lftf.shoppinglist.repository.local.ItemRepository
 import com.lftf.shoppinglist.repository.local.MoneyRepository
+import com.lftf.shoppinglist.repository.shared.SharedPreferences
 import io.mockk.every
 import io.mockk.impl.annotations.RelaxedMockK
 import io.mockk.mockk
@@ -31,6 +32,9 @@ class MainViewModelTest {
 
     @RelaxedMockK
     private lateinit var moneyMock: MoneyRepository
+
+    @RelaxedMockK
+    private lateinit var sharedPreferences: SharedPreferences
 
     @RelaxedMockK
     private lateinit var mainViewModel: MainViewModel
@@ -66,12 +70,14 @@ class MainViewModelTest {
     fun setup() {
         itemMock = mockk<ItemRepository>()
         moneyMock = mockk<MoneyRepository>()
+        sharedPreferences = mockk<SharedPreferences>()
         every { itemMock.listAll() } returns listOfItens
         every { itemMock.save(newItem) } returns true
         every { itemMock.update(listOfItens[0]) } returns true
         every { moneyMock.listAll() } returns listOfMoney
+        every { sharedPreferences.getInt(any()) } returns 0
 
-        mainViewModel = MainViewModel(itemMock, moneyMock).also {
+        mainViewModel = MainViewModel(itemMock, moneyMock, sharedPreferences).also {
             it.getAll()
         }
 
