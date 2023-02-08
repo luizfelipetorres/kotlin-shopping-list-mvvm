@@ -2,6 +2,7 @@ package com.lftf.shoppinglist.di
 
 import com.lftf.shoppinglist.repository.local.ItemRepository
 import com.lftf.shoppinglist.repository.local.MoneyRepository
+import com.lftf.shoppinglist.repository.shared.SharedPreferences
 import com.lftf.shoppinglist.viewmodel.MainViewModel
 import com.lftf.shoppinglist.viewmodel.MoneyViewModel
 import org.koin.android.ext.koin.androidApplication
@@ -17,10 +18,15 @@ val mainModule = module {
         MoneyRepository(androidApplication().applicationContext)
     }
 
+    single {
+        SharedPreferences(androidApplication().applicationContext)
+    }
+
     viewModel {
         MainViewModel(
             moneyRepository = get(),
-            itemRepository = get()
+            itemRepository = get(),
+            sharedPreferences = get()
         )
     }
 

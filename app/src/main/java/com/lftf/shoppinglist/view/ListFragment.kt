@@ -111,10 +111,10 @@ class ListFragment : Fragment(), View.OnClickListener {
     }
 
     private fun setObservers() {
-        val setImage = { bool: Boolean? ->
+        val setImage = { bool: Int? ->
             when (bool) {
-                true -> R.drawable.ic_arrow_up
-                false -> R.drawable.ic_arrow_down
+                MainViewModel.SortOptions.UP -> R.drawable.ic_arrow_up
+                MainViewModel.SortOptions.DOWN -> R.drawable.ic_arrow_down
                 else -> R.drawable.ic_remove
             }
         }

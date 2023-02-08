@@ -21,7 +21,7 @@ class ItemAdapter(val context: Context) : AbstractAdapter<ItemAdapter.ItemViewHo
         RecyclerView.ViewHolder(binding.root) {
         fun bind(model: ItemModel) {
 
-            val strPrice = if (model.quantity > 1)
+            val strPrice = if (model.quantity != 1)
                 context.getString(R.string.total_price).format(
                     model.price.formatPrice(),
                     model.getTotalValue().formatPrice()
