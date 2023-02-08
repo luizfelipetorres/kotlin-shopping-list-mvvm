@@ -8,7 +8,14 @@
         android:id="@+id/MoneyFragment"
         android:name="com.lftf.shoppinglist.view.MoneyFragment"
         android:label="@string/money_fragment_label"
-        tools:layout="@layout/fragment_money"/>
+        tools:layout="@layout/fragment_money" />
+    <action
+        android:id="@+id/action_global_MoneyFragment"
+        app:destination="@id/MoneyFragment"
+        app:enterAnim="@anim/from_left"
+        app:exitAnim="@anim/to_right"
+        app:popEnterAnim="@anim/from_right"
+        app:popExitAnim="@anim/to_left" />
 
     <fragment
         android:id="@+id/FormItemFragment"
@@ -16,24 +23,20 @@
         android:label="@string/form_item_fragment_label"
         tools:layout="@layout/fragment_form_item">
 
-        <action
-            android:id="@+id/action_ListFragment_to_MoneyFragment"
-            app:destination="@id/MoneyFragment" />
         <argument
             android:name="isNew"
             app:argType="boolean"
             android:defaultValue="true" />
     </fragment>
+
     <fragment
         android:id="@+id/ListFragment"
         android:name="com.lftf.shoppinglist.view.ListFragment"
         android:label="@string/list_fragment_label"
         tools:layout="@layout/fragment_list">
 
-        <action
-            android:id="@+id/action_ListFragment_to_MoneyFragment"
-            app:destination="@id/MoneyFragment" />
-        <action
+
+    <action
             android:id="@+id/action_ListFragment_to_FormItemFragment"
             app:destination="@id/FormItemFragment"
             app:popUpTo="@drawable/ic_arrow_down" />

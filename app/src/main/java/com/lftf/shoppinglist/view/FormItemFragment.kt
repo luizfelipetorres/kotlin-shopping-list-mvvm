@@ -17,8 +17,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.lftf.shoppinglist.R
 import com.lftf.shoppinglist.databinding.FragmentFormItemBinding
 import com.lftf.shoppinglist.model.ItemModel
-import com.lftf.shoppinglist.utils.formatPrice
-import com.lftf.shoppinglist.utils.parsePrice
+import com.lftf.shoppinglist.utils.*
 import com.lftf.shoppinglist.view.watcher.PriceWatcher
 import com.lftf.shoppinglist.viewmodel.MainViewModel
 import org.koin.androidx.viewmodel.ext.android.activityViewModel
@@ -47,7 +46,6 @@ class FormItemFragment : BottomSheetDialogFragment(), View.OnClickListener, View
                 d.behavior.state = BottomSheetBehavior.STATE_EXPANDED
             }
         }
-
         return binding.root
     }
 
@@ -55,7 +53,6 @@ class FormItemFragment : BottomSheetDialogFragment(), View.OnClickListener, View
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setClickListeners()
-
 
         setTextChangedListener()
 
@@ -113,18 +110,22 @@ class FormItemFragment : BottomSheetDialogFragment(), View.OnClickListener, View
     }
 
     private fun setObservers() {
-        viewModel.lastItem.observe(viewLifecycleOwner) {
+        viewModel.lastItem.observe(viewLifecycleOwner) { itemModel ->
             with(binding) {
-                lastItem = it
-                if (it != null) {
-                    editTextTitle.setText(it.title)
-                    editTextPrice.setText(it.price.formatPrice())
+                lastItem = itemModel
+                itemModel?.let {
+                    editTextTitle.setText(itemModel.title)
+                    editTextPrice.setText(itemModel.price.formatPrice())
                     editTextQuantity.setText(
-                        it.quantity.toString().let { if (it == "1") "" else it })
+                        itemModel.quantity.toString().let { quantity ->
+                            if (quantity == "1") "" else quantity
+                        }
+                    )
                 }
             }
         }
     }
+
 
     override fun onClick(v: View) {
         when (v.id) {
@@ -134,19 +135,11 @@ class FormItemFragment : BottomSheetDialogFragment(), View.OnClickListener, View
 
     private fun performSaveAction() {
         try {
-            val title = binding.editTextTitle.text.toString().let {
-                if (it == "") throw Exception("Preencha o nome do item!") else it
-            }
-            val quantity = binding.editTextQuantity.text.toString().let {
-                if (it == "") 1 else it.toInt()
-            }
-            val price = binding.editTextPrice.text.toString().parsePrice()
-
             ItemModel().apply {
                 this.id = lastItem?.id ?: 0
-                this.title = title
-                this.quantity = quantity
-                this.price = price
+                this.title = binding.getTitle()
+                this.quantity = binding.getQuantity()
+                this.price = binding.getPrice()
             }.also {
                 viewModel.save(it)
                 dismiss()
@@ -170,11 +163,13 @@ class FormItemFragment : BottomSheetDialogFragment(), View.OnClickListener, View
     }
 
     private fun clearFields() {
-        listOf<EditText>(
-            binding.editTextTitle,
-            binding.editTextPrice,
-            binding.editTextQuantity
-        ).forEach { i -> i.setText("") }
+        with(binding) {
+            listOf<EditText>(
+                editTextTitle,
+                editTextPrice,
+                editTextQuantity
+            ).forEach { i -> i.setText("") }
+        }
         viewModel.updateLastItem(null)
     }
 
