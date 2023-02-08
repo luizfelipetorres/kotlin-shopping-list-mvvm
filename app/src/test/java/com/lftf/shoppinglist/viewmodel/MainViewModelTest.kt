@@ -71,6 +71,7 @@ class MainViewModelTest {
         itemMock = mockk<ItemRepository>()
         moneyMock = mockk<MoneyRepository>()
         sharedPreferences = mockk<SharedPreferences>()
+        
         every { itemMock.listAll() } returns listOfItens
         every { itemMock.save(newItem) } returns true
         every { itemMock.update(listOfItens[0]) } returns true

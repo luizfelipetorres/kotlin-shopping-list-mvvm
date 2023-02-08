@@ -33,10 +33,9 @@ class ItemAdapter(val context: Context) : AbstractAdapter<ItemAdapter.ItemViewHo
             binding.itemQuantity.text = model.quantity.toString()
             binding.itemPrice.text = strPrice
 
-            val lightRed = Color.argb(50, 255, 0, 0)
             binding.linearItem.setBackgroundColor(
-                if (model.price == 0f)
-                    lightRed
+                if (model.price == 0f || model.quantity == 0)
+                    Color.argb(50, 255, 0, 0)
                 else
                     Color.WHITE
             )
